@@ -27,6 +27,7 @@ import {
   addQueryParams,
   addonHasVersionHistory,
   apiAddonType,
+  classifyPermission,
   convertBoolean,
   getCategoryColor,
   getClientApp,
@@ -700,4 +701,27 @@ describe(__filename, () => {
       });
     });
   });
+
+  // describe('classifyPermission', () => {
+  //   for (const hostPerm of [
+  //     '<all_urls>',
+  //     '*://*.mozilla.org/*',
+  //     '*://mozilla.org/',
+  //     'http://mozilla.org/',
+  //     'https://*/path',
+  //     'https://mozilla.org/*',
+  //     'https://mozilla.org/a/b/c/',
+  //   ]) {
+  //     it('returns an origin for a host permission', () => {
+  //       expect(classifyPermission(hostPerm))
+  //         .toEqual({ permission: hostPerm, type: 'origins' });
+  //     });
+  //   }
+  //
+  //   it('returns a permission for a permission text', () => {
+  //     const permission = 'bookmarks';
+  //     expect(classifyPermission(permission))
+  //       .toEqual({ permission, type: 'permissions' });
+  //   });
+  // });
 });

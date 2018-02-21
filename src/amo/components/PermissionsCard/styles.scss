@@ -1,0 +1,19 @@
+@import "~photon-colors/colors";
+@import "~core/css/inc/mixins";
+@import "~core/css/inc/vars.scss";
+
+.Permissions-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+
+  li {
+    display: block;
+    margin-top: 10px;
+  }
+
+  .Footer-link-social {
+    display: inline-block;
+    @include margin-end(20px);
+  }
+}

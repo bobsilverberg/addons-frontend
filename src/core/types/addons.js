@@ -162,6 +162,13 @@ export type AddonType = {
     linux: ?Object,
     windows: ?Object,
   },
+  platformFiles: {
+    all: ?string,
+    android: ?string,
+    mac: ?string,
+    linux: ?string,
+    windows: ?string,
+  },
   isMozillaSignedExtension: boolean,
   isRestartRequired: boolean,
   isWebExtension: boolean,
