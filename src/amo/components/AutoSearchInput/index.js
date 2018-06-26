@@ -52,7 +52,7 @@ type Props = {|
   // This is the name property of the <input> tag.
   inputName: string,
   inputPlaceholder?: string,
-  location: ReactRouterLocation,
+  location?: ReactRouterLocation,
   onSearch: (SearchFilters) => void,
   onSuggestionSelected: (SuggestionType) => void,
   query?: string,
@@ -152,9 +152,12 @@ export class AutoSearchInputBase extends React.Component<InternalProps, State> {
   createFiltersFromQuery(query: string) {
     const { location, userAgentInfo } = this.props;
     // Preserve any existing search filters.
-    const filtersFromLocation = convertQueryParamsToFilters(location.query);
-    // Do not preserve page. New searches should always start on page 1.
-    delete filtersFromLocation.page;
+    let filtersFromLocation = {};
+    if (location) {
+      filtersFromLocation = convertQueryParamsToFilters(location.query);
+      // Do not preserve page. New searches should always start on page 1.
+      delete filtersFromLocation.page;
+    }
 
     return {
       operatingSystem: convertOSToFilterValue(userAgentInfo.os.name),
