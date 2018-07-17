@@ -4,16 +4,7 @@
 .CollectionAddAddon {
   .ErrorList,
   .NoticePlaceholder {
-    margin-top: 16px;
-    min-height: 32px;
-  }
-
-  .NoticePlaceholder {
-    + .AutoSearchInput {
-      .AutoSearchInput-label {
-        padding-top: 4px;
-      }
-    }
+    margin: 0;
   }
 
   .AutoSearchInput-query {
@@ -29,7 +20,7 @@
   label {
     display: block;
     font-size: $font-size-s;
-    padding: 24px 0 6px;
+    padding: 12px 0 6px;
   }
 
   .Notice {
