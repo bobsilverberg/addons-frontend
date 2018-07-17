@@ -53,6 +53,7 @@ import type { DispatchFunc } from 'core/types/redux';
 import type { ReactRouterLocation, ReactRouterType } from 'core/types/router';
 
 import './styles.scss';
+import CollectionControls from '../CollectionControls';
 
 export type Props = {|
   collection: CollectionType | null,
@@ -419,7 +420,8 @@ export class CollectionBase extends React.Component<InternalProps> {
             {this.renderDeleteButton()}
           </Card>
           {!creating && (
-            <CollectionSort
+            <CollectionControls
+              showSort={!creating}
               filters={filters}
               onSortSelect={this.onSortSelect}
             />

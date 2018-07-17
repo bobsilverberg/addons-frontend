@@ -41,18 +41,6 @@ import type { ReactRouterType } from 'core/types/router';
 
 import './styles.scss';
 
-export const MESSAGE_RESET_TIME = 5000;
-const MESSAGE_FADEOUT_TIME = 450;
-
-export const ADDON_ADDED_STATUS_PENDING: 'ADDON_ADDED_STATUS_PENDING' =
-  'ADDON_ADDED_STATUS_PENDING';
-export const ADDON_ADDED_STATUS_SUCCESS: 'ADDON_ADDED_STATUS_SUCCESS' =
-  'ADDON_ADDED_STATUS_SUCCESS';
-
-export type AddonAddedStatusType =
-  | typeof ADDON_ADDED_STATUS_PENDING
-  | typeof ADDON_ADDED_STATUS_SUCCESS;
-
 type Props = {|
   collection: CollectionType | null,
   creating: boolean,

@@ -9,7 +9,7 @@ import Collection, {
 import AddonsCard from 'amo/components/AddonsCard';
 import CollectionDetails from 'amo/components/CollectionDetails';
 import CollectionManager from 'amo/components/CollectionManager';
-import CollectionSort from 'amo/components/CollectionSort';
+import CollectionControls from 'amo/components/CollectionControls';
 import NotFound from 'amo/components/ErrorPage/NotFound';
 import AuthenticateButton from 'core/components/AuthenticateButton';
 import Paginate from 'core/components/Paginate';
@@ -684,32 +684,33 @@ describe(__filename, () => {
     sinon.assert.called(_isFeaturedCollection);
   });
 
-  it('renders a CollectionSort component', () => {
+  it('renders a CollectionControls component', () => {
     const page = 2;
     const sort = COLLECTION_SORT_NAME;
 
     const wrapper = renderComponent({
+      creating: false,
       location: fakeRouterLocation({ query: { collection_sort: sort, page } }),
     });
 
-    const sortComponent = wrapper.find(CollectionSort);
+    const controls = wrapper.find(CollectionControls);
 
-    expect(sortComponent).toHaveLength(1);
-    expect(sortComponent).toHaveProp('filters', {
+    expect(controls).toHaveLength(1);
+    expect(controls).toHaveProp('filters', {
       page,
       collectionSort: sort,
     });
-    expect(sortComponent).toHaveProp(
+    expect(controls).toHaveProp(
       'onSortSelect',
       wrapper.instance().onSortSelect,
     );
   });
 
-  it('does not render a CollectionSort component when creating', () => {
+  it('does not render a CollectionControls component when creating', () => {
     const { store } = dispatchSignInActions();
     const wrapper = renderComponent({ creating: true, store });
 
-    expect(wrapper.find(CollectionSort)).toHaveLength(0);
+    expect(wrapper.find(CollectionControls)).toHaveLength(0);
   });
 
   it('renders a collection for editing', () => {
@@ -1366,7 +1367,9 @@ describe(__filename, () => {
         });
 
         // Emulate clicking the sort select.
-        const onSortSelect = wrapper.find(CollectionSort).prop('onSortSelect');
+        const onSortSelect = wrapper
+          .find(CollectionControls)
+          .prop('onSortSelect');
         onSortSelect(fakeEvent);
 
         const pathname = `/${lang}/${clientApp}/collections/${username}/${slug}/${

@@ -54,28 +54,26 @@ export class CollectionSortBase extends React.Component<InternalProps> {
     const { filters, i18n, onSortSelect } = this.props;
 
     return (
-      <Card className="CollectionSort">
-        <form>
-          <label className="CollectionSort-label" htmlFor="Sort-Select">
-            {i18n.gettext('Sort add-ons by')}
-          </label>
-          <Select
-            className="CollectionSort-select"
-            defaultValue={filters.collectionSort}
-            id="CollectionSort-select"
-            name="sort"
-            onChange={onSortSelect}
-          >
-            {this.sortOptions().map((option) => {
-              return (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              );
-            })}
-          </Select>
-        </form>
-      </Card>
+      <form className="CollectionSort">
+        <label className="CollectionSort-label" htmlFor="Sort-Select">
+          {i18n.gettext('Sort add-ons by')}
+        </label>
+        <Select
+          className="CollectionSort-select"
+          defaultValue={filters.collectionSort}
+          id="CollectionSort-select"
+          name="sort"
+          onChange={onSortSelect}
+        >
+          {this.sortOptions().map((option) => {
+            return (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            );
+          })}
+        </Select>
+      </form>
     );
   }
 }
