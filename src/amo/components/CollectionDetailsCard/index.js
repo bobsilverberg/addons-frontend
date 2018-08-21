@@ -5,7 +5,6 @@ import { compose } from 'redux';
 
 import CollectionDetails from 'amo/components/CollectionDetails';
 import CollectionManager from 'amo/components/CollectionManager';
-import { beginEditingCollectionDetails } from 'amo/reducers/collections';
 import { getCurrentUser, hasPermission } from 'amo/reducers/users';
 import {
   FEATURED_THEMES_COLLECTION_EDIT,
@@ -18,7 +17,6 @@ import type {
   CollectionType,
 } from 'amo/reducers/collections';
 import type { AppState } from 'amo/store';
-import type { DispatchFunc } from 'core/types/redux';
 
 export type Props = {|
   collection: CollectionType | null,
@@ -29,22 +27,12 @@ export type Props = {|
 
 type InternalProps = {|
   ...Props,
-  dispatch: DispatchFunc,
   editingCollectionDetails: boolean,
   hasEditPermission: boolean,
   showEditButton: boolean,
 |};
 
 export class CollectionDetailsCardBase extends React.Component<InternalProps> {
-  onEditDetails = (event: SyntheticEvent<HTMLButtonElement>) => {
-    const { dispatch } = this.props;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    dispatch(beginEditingCollectionDetails());
-  };
-
   render() {
     const {
       collection,
