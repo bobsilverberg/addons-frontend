@@ -24,6 +24,7 @@ import {
   createFakeCollectionAddon,
   createFakeCollectionDetail,
   fakeAddon,
+  fakeTheme,
   fakeVersion,
   userAgentsByPlatform,
 } from 'tests/unit/helpers';
@@ -189,169 +190,239 @@ describe(__filename, () => {
   //   });
   // });
   //
-  // describe('LOAD_ADDONS_BY_AUTHORS', () => {
-  //   it('loads versions', () => {
-  //     const versionId = 99;
-  //     const version = { ...fakeVersion, id: versionId };
-  //     const state = versionsReducer(
-  //       undefined,
-  //       loadAddonsByAuthors({
-  //         addons: [
-  //           {
-  //             ...fakeAddon,
-  //             current_version: version,
-  //           },
-  //         ],
-  //         authorUsernames: [fakeAddon.authors[0].username],
-  //         count: 1,
-  //         pageSize: DEFAULT_API_PAGE_SIZE,
-  //       }),
-  //     );
-  //
-  //     expect(
-  //       getVersionById({
-  //         state,
-  //         id: versionId,
-  //       }),
-  //     ).toEqual(createInternalVersion(version));
-  //   });
-  //
-  //   it('handles no add-ons', () => {
-  //     const state = versionsReducer(
-  //       undefined,
-  //       loadAddonsByAuthors({
-  //         addons: [],
-  //         authorUsernames: [fakeAddon.authors[0].username],
-  //         count: 1,
-  //         pageSize: DEFAULT_API_PAGE_SIZE,
-  //       }),
-  //     );
-  //
-  //     expect(state.byId).toEqual({});
-  //   });
-  //
-  //   it('handles an add-on without a current_version', () => {
-  //     const state = versionsReducer(
-  //       undefined,
-  //       loadAddonsByAuthors({
-  //         addons: [
-  //           {
-  //             ...fakeAddon,
-  //             current_version: undefined,
-  //           },
-  //         ],
-  //         authorUsernames: [fakeAddon.authors[0].username],
-  //         count: 1,
-  //         pageSize: DEFAULT_API_PAGE_SIZE,
-  //       }),
-  //     );
-  //
-  //     expect(state.byId).toEqual({});
-  //   });
-  // });
+  describe('load versions for add-ons', () => {
+    const versionId = 99;
+    const version = { ...fakeVersion, id: versionId };
 
-  describe('LOAD_CURRENT_COLLECTION', () => {
-    it('loads versions', () => {
-      const versionId = 99;
-      const version = { ...fakeVersion, id: versionId };
-      const fakeCollectionAddon = createFakeCollectionAddon({
-        addon: { ...fakeAddon, current_version: version },
+    describe('LOAD_ADDONS_BY_AUTHORS', () => {
+      it('loads versions', () => {
+        const state = versionsReducer(
+          undefined,
+          loadAddonsByAuthors({
+            addons: [
+              {
+                ...fakeAddon,
+                current_version: version,
+              },
+            ],
+            authorUsernames: [fakeAddon.authors[0].username],
+            count: 1,
+            pageSize: DEFAULT_API_PAGE_SIZE,
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
       });
 
-      const state = versionsReducer(
-        undefined,
-        loadCurrentCollection({
-          addons: [fakeCollectionAddon],
-          detail: createFakeCollectionDetail(),
-          pageSize: DEFAULT_API_PAGE_SIZE,
-        }),
-      );
+      it('handles no add-ons', () => {
+        const state = versionsReducer(
+          undefined,
+          loadAddonsByAuthors({
+            addons: [],
+            authorUsernames: [fakeAddon.authors[0].username],
+            count: 1,
+            pageSize: DEFAULT_API_PAGE_SIZE,
+          }),
+        );
 
-      expect(
-        getVersionById({
-          state,
-          id: versionId,
-        }),
-      ).toEqual(createInternalVersion(version));
-    });
-  });
-
-  describe('LOAD_CURRENT_COLLECTION_PAGE', () => {
-    it('loads versions', () => {
-      const versionId = 99;
-      const version = { ...fakeVersion, id: versionId };
-      const fakeCollectionAddon = createFakeCollectionAddon({
-        addon: { ...fakeAddon, current_version: version },
+        expect(state.byId).toEqual({});
       });
 
-      const state = versionsReducer(
-        undefined,
-        loadCurrentCollectionPage({
-          addons: [fakeCollectionAddon],
-          numberOfAddons: 1,
-          pageSize: DEFAULT_API_PAGE_SIZE,
-        }),
-      );
+      it('handles an add-on without a current_version', () => {
+        const state = versionsReducer(
+          undefined,
+          loadAddonsByAuthors({
+            addons: [
+              {
+                ...fakeAddon,
+                current_version: undefined,
+              },
+            ],
+            authorUsernames: [fakeAddon.authors[0].username],
+            count: 1,
+            pageSize: DEFAULT_API_PAGE_SIZE,
+          }),
+        );
 
-      expect(
-        getVersionById({
-          state,
-          id: versionId,
-        }),
-      ).toEqual(createInternalVersion(version));
+        expect(state.byId).toEqual({});
+      });
     });
-  });
 
-  describe('LOAD_COLLECTION_ADDONS', () => {
-    it('loads versions', () => {
-      const versionId = 99;
-      const version = { ...fakeVersion, id: versionId };
-      const fakeCollectionAddon = createFakeCollectionAddon({
-        addon: { ...fakeAddon, current_version: version },
+    describe('LOAD_CURRENT_COLLECTION', () => {
+      it('loads versions', () => {
+        const fakeCollectionAddon = createFakeCollectionAddon({
+          addon: { ...fakeAddon, current_version: version },
+        });
+
+        const state = versionsReducer(
+          undefined,
+          loadCurrentCollection({
+            addons: [fakeCollectionAddon],
+            detail: createFakeCollectionDetail(),
+            pageSize: DEFAULT_API_PAGE_SIZE,
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
+    });
+
+    describe('LOAD_CURRENT_COLLECTION_PAGE', () => {
+      it('loads versions', () => {
+        const fakeCollectionAddon = createFakeCollectionAddon({
+          addon: { ...fakeAddon, current_version: version },
+        });
+
+        const state = versionsReducer(
+          undefined,
+          loadCurrentCollectionPage({
+            addons: [fakeCollectionAddon],
+            numberOfAddons: 1,
+            pageSize: DEFAULT_API_PAGE_SIZE,
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
+    });
+
+    describe('LOAD_COLLECTION_ADDONS', () => {
+      it('loads versions', () => {
+        const fakeCollectionAddon = createFakeCollectionAddon({
+          addon: { ...fakeAddon, current_version: version },
+        });
+
+        const state = versionsReducer(
+          undefined,
+          loadCollectionAddons({
+            addons: [fakeCollectionAddon],
+            slug: 'sone-slug',
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
+    });
+
+    describe('LOAD_HOME_ADDONS', () => {
+      it('loads versions for featuredExtensions', () => {
+        const state = versionsReducer(
+          undefined,
+          loadHomeAddons({
+            collections: [],
+            featuredExtensions: createAddonsApiResult([
+              { ...fakeAddon, current_version: version },
+            ]),
+            popularExtensions: createAddonsApiResult([]),
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
       });
 
-      const state = versionsReducer(
-        undefined,
-        loadCollectionAddons({
-          addons: [fakeCollectionAddon],
-          slug: 'sone-slug',
-        }),
-      );
+      it('loads versions for popularExtensions', () => {
+        const state = versionsReducer(
+          undefined,
+          loadHomeAddons({
+            collections: [],
+            featuredExtensions: createAddonsApiResult([]),
+            // TODO: This is going to be brittle because we change this argument
+            // from time to time. A refactor could fix this.
+            popularExtensions: createAddonsApiResult([
+              { ...fakeAddon, current_version: version },
+            ]),
+          }),
+        );
 
-      expect(
-        getVersionById({
-          state,
-          id: versionId,
-        }),
-      ).toEqual(createInternalVersion(version));
-    });
-  });
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
 
-  describe('LOAD_HOME_ADDONS', () => {
-    it('loads versions', () => {
-      const versionId = 99;
-      const version = { ...fakeVersion, id: versionId };
+      it('loads versions for featuredThemes', () => {
+        const state = versionsReducer(
+          undefined,
+          loadHomeAddons({
+            collections: [],
+            featuredExtensions: createAddonsApiResult([]),
+            featuredThemes: createAddonsApiResult([
+              { ...fakeTheme, current_version: version },
+            ]),
+            popularExtensions: createAddonsApiResult([]),
+          }),
+        );
 
-      const state = versionsReducer(
-        undefined,
-        loadHomeAddons({
-          collections: [],
-          featuredExtensions: createAddonsApiResult([
-            { ...fakeAddon, current_version: version },
-          ]),
-          // TODO: This is going to be brittle because we change this argument
-          // from time to time. Maybe we can just make it an optional argument?
-          popularExtensions: createAddonsApiResult([]),
-        }),
-      );
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
 
-      expect(
-        getVersionById({
-          state,
-          id: versionId,
-        }),
-      ).toEqual('abc');
-      // ).toEqual(createInternalVersion(version));
+      it('loads versions for collections', () => {
+        const versionId2 = 111;
+        const version2 = { ...fakeVersion, id: versionId2 };
+        const fakeCollectionAddon1 = createFakeCollectionAddon({
+          addon: { ...fakeAddon, current_version: version },
+        });
+        const fakeCollectionAddon2 = createFakeCollectionAddon({
+          addon: { ...fakeAddon, current_version: version2 },
+        });
+
+        const state = versionsReducer(
+          undefined,
+          loadHomeAddons({
+            collections: [
+              { results: [fakeCollectionAddon1] },
+              { results: [fakeCollectionAddon2] },
+            ],
+            featuredExtensions: createAddonsApiResult([]),
+            popularExtensions: createAddonsApiResult([]),
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+        expect(
+          getVersionById({
+            state,
+            id: versionId2,
+          }),
+        ).toEqual(createInternalVersion(version2));
+      });
     });
   });
 });

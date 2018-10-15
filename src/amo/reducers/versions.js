@@ -290,6 +290,15 @@ const reducer = (
         }
       }
 
+      for (const collection of collections) {
+        if (collection && collection.results) {
+          for (const addon of collection.results) {
+            const version = createInternalVersion(addon.addon.current_version);
+            newVersions[version.id] = version;
+          }
+        }
+      }
+
       return {
         ...state,
         byId: {
