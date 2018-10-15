@@ -160,7 +160,6 @@ export function createInternalAddon(apiAddon: ExternalAddonType): AddonType {
     average_daily_users: apiAddon.average_daily_users,
     categories: apiAddon.categories,
     contributions_url: apiAddon.contributions_url,
-    current_version: apiAddon.current_version,
     default_locale: apiAddon.default_locale,
     description: apiAddon.description,
     edit_url: apiAddon.edit_url,
@@ -195,7 +194,9 @@ export function createInternalAddon(apiAddon: ExternalAddonType): AddonType {
     weekly_downloads: apiAddon.weekly_downloads,
 
     // These are custom properties not in the API response.
-    platformFiles: createPlatformFiles(apiAddon.current_version),
+    currentVersionId: apiAddon.current_version
+      ? apiAddon.current_version.id
+      : null,
     isRestartRequired: false,
     isWebExtension: false,
     isMozillaSignedExtension: false,
