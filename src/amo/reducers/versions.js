@@ -2,6 +2,11 @@
 import invariant from 'invariant';
 
 import { LOAD_ADDONS_BY_AUTHORS } from 'amo/reducers/addonsByAuthors';
+import {
+  LOAD_COLLECTION_ADDONS,
+  LOAD_CURRENT_COLLECTION,
+  LOAD_CURRENT_COLLECTION_PAGE,
+} from 'amo/reducers/collections';
 import { createPlatformFiles } from 'core/reducers/addons';
 import { findFileForPlatform } from 'core/utils';
 import type { UserAgentInfoType } from 'core/reducers/api';
@@ -228,11 +233,23 @@ const reducer = (
       };
     }
 
-    case LOAD_ADDONS_BY_AUTHORS: {
+    case LOAD_ADDONS_BY_AUTHORS:
+    case LOAD_COLLECTION_ADDONS:
+    case LOAD_CURRENT_COLLECTION:
+    case LOAD_CURRENT_COLLECTION_PAGE: {
       const { addons } = action.payload;
 
       const newVersions = {};
-      for (const addon of addons) {
+      for (let addon of addons) {
+        if (
+          [
+            LOAD_COLLECTION_ADDONS,
+            LOAD_CURRENT_COLLECTION,
+            LOAD_CURRENT_COLLECTION_PAGE,
+          ].includes(action.type)
+        ) {
+          addon = addon.addon;
+        }
         if (addon.current_version) {
           const version = createInternalVersion(addon.current_version);
           newVersions[version.id] = version;
