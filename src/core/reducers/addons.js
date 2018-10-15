@@ -195,10 +195,13 @@ export function createInternalAddon(apiAddon: ExternalAddonType): AddonType {
     weekly_downloads: apiAddon.weekly_downloads,
 
     // These are custom properties not in the API response.
-    platformFiles: createPlatformFiles(apiAddon.current_version),
+    currentVersionId: apiAddon.current_version
+      ? apiAddon.current_version.id
+      : null,
     isRestartRequired: false,
     isWebExtension: false,
     isMozillaSignedExtension: false,
+    platformFiles: createPlatformFiles(apiAddon.current_version),
   };
 
   if (addon.type === ADDON_TYPE_THEME && apiAddon.theme_data) {

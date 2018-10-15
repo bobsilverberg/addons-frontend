@@ -13,7 +13,7 @@ import type {
 export const FETCH_VERSIONS: 'FETCH_VERSIONS' = 'FETCH_VERSIONS';
 export const LOAD_VERSIONS: 'LOAD_VERSIONS' = 'LOAD_VERSIONS';
 
-type VersionIdType = number;
+export type VersionIdType = number;
 
 export type AddonVersionType = {
   compatibility?: AddonCompatibilityType,
