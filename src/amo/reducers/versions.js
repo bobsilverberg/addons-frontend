@@ -8,6 +8,7 @@ import {
   LOAD_CURRENT_COLLECTION_PAGE,
 } from 'amo/reducers/collections';
 import { LOAD_HOME_ADDONS } from 'amo/reducers/home';
+import { LANDING_LOADED } from 'core/constants';
 import { createPlatformFiles } from 'core/reducers/addons';
 import { findFileForPlatform } from 'core/utils';
 import type { UserAgentInfoType } from 'core/reducers/api';
@@ -295,6 +296,30 @@ const reducer = (
           for (const addon of collection.results) {
             const version = createInternalVersion(addon.addon.current_version);
             newVersions[version.id] = version;
+          }
+        }
+      }
+
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          ...newVersions,
+        },
+      };
+    }
+
+    case LANDING_LOADED: {
+      const { featured, highlyRated, trending } = action.payload;
+
+      const newVersions = {};
+      for (const apiResponse of [featured, highlyRated, trending]) {
+        if (apiResponse) {
+          for (const addon of apiResponse.results) {
+            if (addon.current_version) {
+              const version = createInternalVersion(addon.current_version);
+              newVersions[version.id] = version;
+            }
           }
         }
       }

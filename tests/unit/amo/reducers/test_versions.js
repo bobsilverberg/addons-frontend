@@ -7,6 +7,7 @@ import {
   loadCurrentCollection,
 } from 'amo/reducers/collections';
 import { loadHomeAddons } from 'amo/reducers/home';
+import { loadLanding } from 'amo/actions/landing';
 import versionsReducer, {
   createInternalVersion,
   fetchVersions,
@@ -18,6 +19,7 @@ import versionsReducer, {
   loadVersions,
 } from 'amo/reducers/versions';
 import { DEFAULT_API_PAGE_SIZE } from 'core/api';
+import { ADDON_TYPE_EXTENSION } from 'core/constants';
 import { createPlatformFiles } from 'core/reducers/addons';
 import {
   createAddonsApiResult,
@@ -422,6 +424,71 @@ describe(__filename, () => {
             id: versionId2,
           }),
         ).toEqual(createInternalVersion(version2));
+      });
+    });
+
+    describe('LANDING_LOADED', () => {
+      it('loads versions for featured add-ons', () => {
+        const state = versionsReducer(
+          undefined,
+          loadLanding({
+            addonType: ADDON_TYPE_EXTENSION,
+            featured: createAddonsApiResult([
+              { ...fakeAddon, current_version: version },
+            ]),
+            highlyRated: createAddonsApiResult([]),
+            trending: createAddonsApiResult([]),
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
+
+      it('loads versions for highlyRated add-ons', () => {
+        const state = versionsReducer(
+          undefined,
+          loadLanding({
+            addonType: ADDON_TYPE_EXTENSION,
+            featured: createAddonsApiResult([]),
+            highlyRated: createAddonsApiResult([
+              { ...fakeAddon, current_version: version },
+            ]),
+            trending: createAddonsApiResult([]),
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
+
+      it('loads versions for trending add-ons', () => {
+        const state = versionsReducer(
+          undefined,
+          loadLanding({
+            addonType: ADDON_TYPE_EXTENSION,
+            featured: createAddonsApiResult([]),
+            highlyRated: createAddonsApiResult([]),
+            trending: createAddonsApiResult([
+              { ...fakeAddon, current_version: version },
+            ]),
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
       });
     });
   });
