@@ -10,7 +10,8 @@ import {
 import { LOAD_HOME_ADDONS } from 'amo/reducers/home';
 import { LOAD_RECOMMENDATIONS } from 'amo/reducers/recommendations';
 import { LANDING_LOADED } from 'core/constants';
-import { createPlatformFiles } from 'core/reducers/addons';
+import { LOAD_ADDON_RESULTS, createPlatformFiles } from 'core/reducers/addons';
+import { SEARCH_LOADED } from 'core/reducers/search';
 import { findFileForPlatform } from 'core/utils';
 import type { UserAgentInfoType } from 'core/reducers/api';
 import type {
@@ -237,14 +238,17 @@ const reducer = (
     }
 
     case LOAD_ADDONS_BY_AUTHORS:
+    case LOAD_ADDON_RESULTS:
     case LOAD_COLLECTION_ADDONS:
     case LOAD_CURRENT_COLLECTION:
     case LOAD_CURRENT_COLLECTION_PAGE:
-    case LOAD_RECOMMENDATIONS: {
-      const { addons } = action.payload;
+    case LOAD_RECOMMENDATIONS:
+    case SEARCH_LOADED: {
+      const { addons, results } = action.payload;
 
+      const items = addons || results;
       const newVersions = {};
-      for (let addon of addons) {
+      for (let addon of items) {
         if (
           [
             LOAD_COLLECTION_ADDONS,

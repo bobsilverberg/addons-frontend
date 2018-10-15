@@ -24,7 +24,8 @@ import versionsReducer, {
 } from 'amo/reducers/versions';
 import { DEFAULT_API_PAGE_SIZE } from 'core/api';
 import { ADDON_TYPE_EXTENSION } from 'core/constants';
-import { createPlatformFiles } from 'core/reducers/addons';
+import { createPlatformFiles, loadAddonResults } from 'core/reducers/addons';
+import { searchLoad } from 'core/reducers/search';
 import {
   createAddonsApiResult,
   createFakeCollectionAddon,
@@ -509,6 +510,54 @@ describe(__filename, () => {
             ],
             guid: fakeAddon.guid,
             outcome: OUTCOME_RECOMMENDED,
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
+    });
+
+    describe('LOAD_ADDON_RESULTS', () => {
+      it('loads versions', () => {
+        const state = versionsReducer(
+          undefined,
+          loadAddonResults({
+            addons: [
+              {
+                ...fakeAddon,
+                current_version: version,
+              },
+            ],
+          }),
+        );
+
+        expect(
+          getVersionById({
+            state,
+            id: versionId,
+          }),
+        ).toEqual(createInternalVersion(version));
+      });
+    });
+
+    describe('SEARCH_LOADED', () => {
+      it('loads versions', () => {
+        const state = versionsReducer(
+          undefined,
+          searchLoad({
+            count: 1,
+            pageSize: DEFAULT_API_PAGE_SIZE,
+            results: [
+              {
+                ...fakeAddon,
+                current_version: version,
+              },
+            ],
           }),
         );
 
