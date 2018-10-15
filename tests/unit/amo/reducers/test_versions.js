@@ -1,5 +1,9 @@
 import UAParser from 'ua-parser-js';
 
+import {
+  EXTENSIONS_BY_AUTHORS_PAGE_SIZE,
+  loadAddonsByAuthors,
+} from 'amo/reducers/addonsByAuthors';
 import versionsReducer, {
   createInternalVersion,
   fetchVersions,
@@ -11,7 +15,11 @@ import versionsReducer, {
   loadVersions,
 } from 'amo/reducers/versions';
 import { createPlatformFiles } from 'core/reducers/addons';
-import { fakeVersion, userAgentsByPlatform } from 'tests/unit/helpers';
+import {
+  fakeAddon,
+  fakeVersion,
+  userAgentsByPlatform,
+} from 'tests/unit/helpers';
 
 describe(__filename, () => {
   it('defaults to its initial state', () => {
@@ -171,6 +179,67 @@ describe(__filename, () => {
           id: fakeVersion.id,
         }),
       ).toEqual(null);
+    });
+  });
+
+  describe('LOAD_ADDONS_BY_AUTHORS', () => {
+    it('loads versions', () => {
+      const versionId = 99;
+      const version = { ...fakeVersion, id: versionId };
+      const state = versionsReducer(
+        undefined,
+        loadAddonsByAuthors({
+          addons: [
+            {
+              ...fakeAddon,
+              current_version: version,
+            },
+          ],
+          authorUsernames: [fakeAddon.authors[0].username],
+          count: 1,
+          pageSize: EXTENSIONS_BY_AUTHORS_PAGE_SIZE,
+        }),
+      );
+
+      expect(
+        getVersionById({
+          state,
+          id: versionId,
+        }),
+      ).toEqual(createInternalVersion(version));
+    });
+
+    it('handles no add-ons', () => {
+      const state = versionsReducer(
+        undefined,
+        loadAddonsByAuthors({
+          addons: [],
+          authorUsernames: [fakeAddon.authors[0].username],
+          count: 1,
+          pageSize: EXTENSIONS_BY_AUTHORS_PAGE_SIZE,
+        }),
+      );
+
+      expect(state.byId).toEqual({});
+    });
+
+    it('handles an add-on without a current_version', () => {
+      const state = versionsReducer(
+        undefined,
+        loadAddonsByAuthors({
+          addons: [
+            {
+              ...fakeAddon,
+              current_version: undefined,
+            },
+          ],
+          authorUsernames: [fakeAddon.authors[0].username],
+          count: 1,
+          pageSize: EXTENSIONS_BY_AUTHORS_PAGE_SIZE,
+        }),
+      );
+
+      expect(state.byId).toEqual({});
     });
   });
 });

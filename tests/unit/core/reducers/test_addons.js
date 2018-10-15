@@ -115,6 +115,7 @@ describe(__filename, () => {
 
     expect(state.byID[extension.id]).toEqual({
       ...extension,
+      currentVersionId: fakeAddon.current_version.id,
       platformFiles: {
         ...defaultPlatformFiles,
         [OS_ALL]: fakeAddon.current_version.files[0],
@@ -141,6 +142,7 @@ describe(__filename, () => {
       },
       description: theme.description,
       guid: getGuid(theme),
+      currentVersionId: fakeTheme.current_version.id,
       platformFiles: {
         ...defaultPlatformFiles,
         [OS_ALL]: fakeTheme.current_version.files[0],

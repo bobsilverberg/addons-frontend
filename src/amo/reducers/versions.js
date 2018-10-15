@@ -1,6 +1,7 @@
 /* @flow */
 import invariant from 'invariant';
 
+import { LOAD_ADDONS_BY_AUTHORS } from 'amo/reducers/addonsByAuthors';
 import { createPlatformFiles } from 'core/reducers/addons';
 import { findFileForPlatform } from 'core/utils';
 import type { UserAgentInfoType } from 'core/reducers/api';
@@ -223,6 +224,26 @@ const reducer = (
             versionIds: versions.map((version) => version.id),
             loading: false,
           },
+        },
+      };
+    }
+
+    case LOAD_ADDONS_BY_AUTHORS: {
+      const { addons } = action.payload;
+
+      const newVersions = {};
+      for (const addon of addons) {
+        if (addon.current_version) {
+          const version = createInternalVersion(addon.current_version);
+          newVersions[version.id] = version;
+        }
+      }
+
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          ...newVersions,
         },
       };
     }
