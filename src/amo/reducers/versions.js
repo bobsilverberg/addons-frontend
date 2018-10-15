@@ -8,6 +8,7 @@ import {
   LOAD_CURRENT_COLLECTION_PAGE,
 } from 'amo/reducers/collections';
 import { LOAD_HOME_ADDONS } from 'amo/reducers/home';
+import { LOAD_RECOMMENDATIONS } from 'amo/reducers/recommendations';
 import { LANDING_LOADED } from 'core/constants';
 import { createPlatformFiles } from 'core/reducers/addons';
 import { findFileForPlatform } from 'core/utils';
@@ -238,7 +239,8 @@ const reducer = (
     case LOAD_ADDONS_BY_AUTHORS:
     case LOAD_COLLECTION_ADDONS:
     case LOAD_CURRENT_COLLECTION:
-    case LOAD_CURRENT_COLLECTION_PAGE: {
+    case LOAD_CURRENT_COLLECTION_PAGE:
+    case LOAD_RECOMMENDATIONS: {
       const { addons } = action.payload;
 
       const newVersions = {};
