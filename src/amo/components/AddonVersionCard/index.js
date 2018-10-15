@@ -6,6 +6,8 @@ import { compose } from 'redux';
 import { getVersionInfo } from 'amo/reducers/versions';
 import translate from 'core/i18n/translate';
 import { sanitizeUserHTML } from 'core/utils';
+import { getErrorMessage } from 'core/utils/addons';
+import { getClientCompatibility } from 'core/utils/compatibility';
 import type { AddonVersionType } from 'amo/reducers/versions';
 import type { AppState } from 'amo/store';
 import type { UserAgentInfoType } from 'core/reducers/api';
@@ -14,6 +16,7 @@ import type { I18nType } from 'core/types/i18n';
 import './styles.scss';
 
 type Props = {|
+  _getClientCompatibility: typeof getClientCompatibility,
   version: AddonVersionType,
 |};
 
@@ -24,6 +27,10 @@ type InternalProps = {|
 |};
 
 export class AddonVersionCardBase extends React.Component<InternalProps> {
+  static defaultProps = {
+    _getClientCompatibility: getClientCompatibility,
+  };
+
   // From Addon/index.js
   renderInstallError() {
     const { i18n, installError: error } = this.props;
@@ -46,7 +53,7 @@ export class AddonVersionCardBase extends React.Component<InternalProps> {
     let isCompatible = false;
     let compatibility;
     if (addon) {
-      compatibility = getClientCompatibility({
+      compatibility = _getClientCompatibility({
         addon,
         clientApp,
         userAgentInfo,
