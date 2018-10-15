@@ -6,6 +6,7 @@ import {
   loadCurrentCollectionPage,
   loadCurrentCollection,
 } from 'amo/reducers/collections';
+import { loadHomeAddons } from 'amo/reducers/home';
 import versionsReducer, {
   createInternalVersion,
   fetchVersions,
@@ -19,6 +20,7 @@ import versionsReducer, {
 import { DEFAULT_API_PAGE_SIZE } from 'core/api';
 import { createPlatformFiles } from 'core/reducers/addons';
 import {
+  createAddonsApiResult,
   createFakeCollectionAddon,
   createFakeCollectionDetail,
   fakeAddon,
@@ -322,6 +324,34 @@ describe(__filename, () => {
           id: versionId,
         }),
       ).toEqual(createInternalVersion(version));
+    });
+  });
+
+  describe('LOAD_HOME_ADDONS', () => {
+    it('loads versions', () => {
+      const versionId = 99;
+      const version = { ...fakeVersion, id: versionId };
+
+      const state = versionsReducer(
+        undefined,
+        loadHomeAddons({
+          collections: [],
+          featuredExtensions: createAddonsApiResult([
+            { ...fakeAddon, current_version: version },
+          ]),
+          // TODO: This is going to be brittle because we change this argument
+          // from time to time. Maybe we can just make it an optional argument?
+          popularExtensions: createAddonsApiResult([]),
+        }),
+      );
+
+      expect(
+        getVersionById({
+          state,
+          id: versionId,
+        }),
+      ).toEqual('abc');
+      // ).toEqual(createInternalVersion(version));
     });
   });
 });

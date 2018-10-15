@@ -7,6 +7,7 @@ import {
   LOAD_CURRENT_COLLECTION,
   LOAD_CURRENT_COLLECTION_PAGE,
 } from 'amo/reducers/collections';
+import { LOAD_HOME_ADDONS } from 'amo/reducers/home';
 import { createPlatformFiles } from 'core/reducers/addons';
 import { findFileForPlatform } from 'core/utils';
 import type { UserAgentInfoType } from 'core/reducers/api';
@@ -253,6 +254,39 @@ const reducer = (
         if (addon.current_version) {
           const version = createInternalVersion(addon.current_version);
           newVersions[version.id] = version;
+        }
+      }
+
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          ...newVersions,
+        },
+      };
+    }
+
+    case LOAD_HOME_ADDONS: {
+      const {
+        collections,
+        featuredExtensions,
+        featuredThemes,
+        popularExtensions,
+      } = action.payload;
+
+      const newVersions = {};
+      for (const apiResponse of [
+        featuredExtensions,
+        featuredThemes,
+        popularExtensions,
+      ]) {
+        if (apiResponse) {
+          for (const addon of apiResponse.results) {
+            if (addon.current_version) {
+              const version = createInternalVersion(addon.current_version);
+              newVersions[version.id] = version;
+            }
+          }
         }
       }
 
