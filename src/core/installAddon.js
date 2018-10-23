@@ -396,10 +396,13 @@ export class WithInstallHelpers extends React.Component<
       dispatch,
       location,
       userAgentInfo,
+      version,
     } = this.props;
 
-    const { guid, name, platformFiles, type } = addon;
+    const { guid, name, type } = addon;
+    const { platformFiles } = version;
 
+    console.log('----- in install, version: ', version);
     return new Promise((resolve) => {
       dispatch({ type: START_DOWNLOAD, payload: { guid } });
       _tracking.sendEvent({
@@ -418,7 +421,8 @@ export class WithInstallHelpers extends React.Component<
       resolve(installURL);
     })
       .then((installURL) => {
-        const hash = installURL && getFileHash({ addon, installURL });
+        const hash = installURL && getFileHash({ addon, installURL, version });
+        console.log('----- in install, hash: ', hash);
 
         return _addonManager.install(
           installURL,

@@ -34,6 +34,7 @@ import tracking, {
 import { isTheme } from 'core/utils';
 import Button from 'ui/components/Button';
 import Icon from 'ui/components/Icon';
+import type { AddonVersionType } from 'amo/reducers/versions';
 import type { AppState } from 'amo/store';
 import type { WithInstallHelpersInjectedProps } from 'core/installAddon';
 import type { UserAgentInfoType } from 'core/reducers/api';
@@ -53,6 +54,7 @@ type Props = {|
   disabled: boolean,
   puffy: boolean,
   status: string,
+  version: AddonVersionType,
 |};
 
 type InternalProps = {|
