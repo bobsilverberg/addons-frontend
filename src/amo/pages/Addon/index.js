@@ -76,6 +76,7 @@ export class AddonBase extends React.Component {
     addonIsLoading: PropTypes.bool,
     clientApp: PropTypes.string.isRequired,
     config: PropTypes.object,
+    currentVersion: PropTypes.object,
     defaultInstallSource: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
     enable: PropTypes.func.isRequired,
@@ -531,6 +532,7 @@ export class AddonBase extends React.Component {
                 {showInstallButton && (
                   <AMInstallButton
                     addon={addon}
+                    currentVersion={currentVersion}
                     defaultInstallSource={defaultInstallSource}
                     disabled={!isCompatible}
                     enable={enable}
