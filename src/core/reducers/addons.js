@@ -421,6 +421,10 @@ export default function addonsReducer(
       const loadingBySlug = { ...state.loadingBySlug };
 
       loadedAddons.forEach((loadedAddon) => {
+        //TODO: Remove this once the API change lands. This is just so I can proceed with development and testing.
+        loadedAddon.current_version.id =
+          loadedAddon.current_version.id || Math.floor(Math.random() * 10000);
+
         const addon = createInternalAddon(loadedAddon);
         // Flow wants hash maps with string keys.
         // See: https://zhenyong.github.io/flowtype/docs/objects.html#objects-as-maps

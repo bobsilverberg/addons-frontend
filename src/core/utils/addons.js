@@ -13,7 +13,6 @@ import log from 'core/logger';
 import { getPreviewImage } from 'core/imageUtils';
 import type { AddonType } from 'core/types/addons';
 import type { I18nType } from 'core/types/i18n';
-import type { AddonVersionType } from '../../amo/reducers/versions';
 
 export const getErrorMessage = ({
   i18n,
@@ -44,24 +43,16 @@ export const getErrorMessage = ({
 export const getFileHash = ({
   addon,
   installURL,
-  currentVersion,
 }: {|
   addon: AddonType,
   installURL: string,
-  currentVersion?: AddonVersionType,
 |}): string | void => {
   const urlKey = installURL.split('?')[0];
 
-  console.log('----- in getFileHash, installURL: ', installURL);
-  console.log('----- in getFileHash, urlKey: ', urlKey);
-  console.log('----- in getFileHash, version: ', currentVersion);
-  if (currentVersion) {
-    for (const platform of Object.keys(currentVersion.platformFiles)) {
+  if (addon.current_version) {
+    for (const file of addon.current_version.files) {
       // The API sometimes appends ?src= to URLs so we just check the basename.
-      const file = currentVersion.platformFiles[platform];
-      console.log('----- in getFileHash, file: ', file);
-      // console.log('----- in getFileHash, file.url: ', file.url);
-      if (file && file.url.startsWith(urlKey)) {
+      if (file.url.startsWith(urlKey)) {
         return file.hash;
       }
     }

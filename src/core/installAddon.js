@@ -50,7 +50,6 @@ import type { UserAgentInfoType } from 'core/reducers/api';
 import type { AddonType, PlatformFilesType } from 'core/types/addons';
 import type { DispatchFunc } from 'core/types/redux';
 import type { ReactRouterLocationType } from 'core/types/router';
-import type { AddonVersionType } from '../amo/reducers/versions';
 
 type InstallThemeParams = {|
   name: string,
@@ -217,7 +216,6 @@ type WithInstallHelpersProps = {|
   _installTheme: typeof installTheme,
   _tracking: typeof tracking,
   addon: AddonType,
-  currentVersion: AddonVersionType,
   defaultInstallSource: string,
   userAgentInfo: UserAgentInfoType,
 |};
@@ -292,7 +290,6 @@ export class WithInstallHelpers extends React.Component<
     const {
       _addonManager,
       addon,
-      currentVersion,
       defaultInstallSource,
       dispatch,
       location,
@@ -308,8 +305,7 @@ export class WithInstallHelpers extends React.Component<
       return Promise.resolve();
     }
 
-    const { guid, type } = addon;
-    const { platformFiles } = currentVersion;
+    const { guid, platformFiles, type } = addon;
 
     const installURL = findInstallURL({
       defaultInstallSource,
@@ -396,17 +392,14 @@ export class WithInstallHelpers extends React.Component<
       _addonManager,
       _tracking,
       addon,
-      currentVersion,
       defaultInstallSource,
       dispatch,
       location,
       userAgentInfo,
     } = this.props;
 
-    const { guid, name, type } = addon;
-    const { platformFiles } = currentVersion;
+    const { guid, name, platformFiles, type } = addon;
 
-    console.log('----- in install, version: ', currentVersion);
     return new Promise((resolve) => {
       dispatch({ type: START_DOWNLOAD, payload: { guid } });
       _tracking.sendEvent({
@@ -425,9 +418,7 @@ export class WithInstallHelpers extends React.Component<
       resolve(installURL);
     })
       .then((installURL) => {
-        const hash =
-          installURL && getFileHash({ addon, installURL, currentVersion });
-        console.log('----- in install, hash: ', hash);
+        const hash = installURL && getFileHash({ addon, installURL });
 
         return _addonManager.install(
           installURL,

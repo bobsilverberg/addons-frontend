@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
 
-import { getVersionById } from 'amo/reducers/versions';
+import { getVersionById } from 'core/reducers/versions';
 import AddonCompatibilityError from 'disco/components/AddonCompatibilityError';
 import AMInstallButton from 'core/components/AMInstallButton';
 import {
@@ -29,7 +29,7 @@ import { sanitizeHTMLWithExternalLinks } from 'disco/utils';
 import { getClientCompatibility } from 'core/utils/compatibility';
 import LoadingText from 'ui/components/LoadingText';
 import ThemeImage from 'ui/components/ThemeImage';
-import type { AddonVersionType } from 'amo/reducers/versions';
+import type { AddonVersionType } from 'core/reducers/versions';
 import type { UserAgentInfoType } from 'core/reducers/api';
 import type { InstalledAddon } from 'core/reducers/installations';
 import type { WithInstallHelpersInjectedProps } from 'core/installAddon';
@@ -98,6 +98,7 @@ export class AddonBase extends React.Component<InternalProps> {
       return (
         <div className="logo">
           <img src={addon.icon_url} alt="" />
+          This is a test!
         </div>
       );
     }
@@ -314,6 +315,7 @@ function mapStateToProps(state: AppState, ownProps: Props) {
 
   let installation = {};
   if (addon) {
+    console.log('----- in mapStateToProps in disco/Addon, addon: ', addon);
     installation = state.installations[addon.guid] || {};
     currentVersion = getVersionById({
       id: addon.currentVersionId,

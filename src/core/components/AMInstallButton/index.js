@@ -34,7 +34,7 @@ import tracking, {
 import { isTheme } from 'core/utils';
 import Button from 'ui/components/Button';
 import Icon from 'ui/components/Icon';
-import type { AddonVersionType } from 'amo/reducers/versions';
+import type { AddonVersionType } from 'core/reducers/versions';
 import type { AppState } from 'amo/store';
 import type { WithInstallHelpersInjectedProps } from 'core/installAddon';
 import type { UserAgentInfoType } from 'core/reducers/api';
@@ -249,6 +249,7 @@ export class AMInstallButtonBase extends React.Component<InternalProps> {
       _log,
       addon,
       className,
+      currentVersion,
       defaultInstallSource,
       disabled,
       hasAddonManager,
@@ -265,7 +266,7 @@ export class AMInstallButtonBase extends React.Component<InternalProps> {
     const installURL = findInstallURL({
       defaultInstallSource,
       location,
-      platformFiles: addon.platformFiles,
+      platformFiles: currentVersion.platformFiles,
       userAgentInfo,
     });
 

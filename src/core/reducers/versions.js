@@ -263,9 +263,16 @@ const reducer = (
         if (addonToUse.current_version) {
           const apiVersion = addonToUse.current_version;
 
+          //TODO: Remove this once the API change lands. This is just so I can proceed with development and testing.
+          apiVersion.id = apiVersion.id || Math.floor(Math.random() * 10000);
           // Do not overwrite licence and release_notes data with nulls, which
           // are omitted from some API responses.
-          if (!apiVersion.license || !apiVersion.release_notes) {
+          // Discopane does not need this done, and does not get a version
+          // property, so we can check for that too.
+          if (
+            apiVersion.version &&
+            (!apiVersion.license || !apiVersion.release_notes)
+          ) {
             const existingVersion = getVersionById({
               id: apiVersion.id,
               state,
