@@ -1,0 +1,39 @@
+@import '~amo/css/styles';
+
+.InstallButtonWrapper {
+  .AMInstallButton,
+  .Button--get-firefox {
+    @include respond-to(medium) {
+      align-self: flex-end;
+      margin-bottom: 12px;
+    }
+  }
+
+  .Button {
+    white-space: nowrap;
+  }
+}
+
+.InstallButtonWrapper .AMInstallButton {
+  @include respond-to(medium) {
+    @include margin-start(auto);
+
+    align-content: center;
+    align-self: center;
+  }
+}
+
+.InstallButtonWrapper .AMInstallButton-button,
+.Button--get-firefox {
+  width: 100%;
+
+  @include respond-to(medium) {
+    width: auto;
+  }
+}
+
+.InstallButtonWrapper .AMInstallButton-loading-button {
+  @include respond-to(medium) {
+    width: 48px;
+  }
+}

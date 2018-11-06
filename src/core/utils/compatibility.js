@@ -280,3 +280,23 @@ export const isQuantumCompatible = ({
   // may not be Quantum compatible.
   return addon.isWebExtension || addon.isMozillaSignedExtension;
 };
+
+export const getAddonCompatibilityInfo = ({
+  addon,
+  clientApp,
+  currentVersion,
+  userAgentInfo,
+}) => {
+  if (addon && currentVersion) {
+    const compatibility = getClientCompatibility({
+      addon,
+      clientApp,
+      currentVersion,
+      userAgentInfo,
+    });
+    if (compatibility && compatibility.reason !== INCOMPATIBLE_NOT_FIREFOX) {
+      return true;
+    }
+  }
+  return false;
+};

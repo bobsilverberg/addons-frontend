@@ -2,16 +2,6 @@
 
 .Addon {
   @include page-padding();
-
-  .Addon-summary-and-install-button-wrapper {
-    .AMInstallButton,
-    .Button--get-firefox {
-      @include respond-to(medium) {
-        align-self: flex-end;
-        margin-bottom: 12px;
-      }
-    }
-  }
 }
 
 .Addon .Card {
@@ -88,10 +78,6 @@
   grid-column: 1 / span 2;
   width: 100%;
 
-  .Button {
-    white-space: nowrap;
-  }
-
   @include respond-to(extraLarge) {
     display: flex;
     justify-content: space-between;
@@ -112,30 +98,6 @@
 
 .AddonDescription-contents {
   word-wrap: break-word;
-}
-
-.Addon .AMInstallButton {
-  @include respond-to(medium) {
-    @include margin-start(auto);
-
-    align-content: center;
-    align-self: center;
-  }
-}
-
-.Addon .AMInstallButton-button,
-.Button--get-firefox {
-  width: 100%;
-
-  @include respond-to(medium) {
-    width: auto;
-  }
-}
-
-.Addon .AMInstallButton-loading-button {
-  @include respond-to(medium) {
-    width: 48px;
-  }
 }
 
 // Details section with lots of grid stuff, on larger displays.
