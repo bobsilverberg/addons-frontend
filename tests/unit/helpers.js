@@ -920,6 +920,20 @@ export const createFakeHistory = ({ location = createFakeLocation() } = {}) => {
   };
 };
 
+/*
+ * Returns a fake ClientCompatibilityType object.
+ */
+export const createFakeClientCompatibility = (props = {}) => {
+  return {
+    compatible: true,
+    downloadUrl: 'https://example.com/',
+    maxVersion: '2',
+    minVersion: '1',
+    reason: 'A fake reason',
+    ...props,
+  };
+};
+
 export const createContextWithFakeRouter = ({
   history = createFakeHistory(),
   location = history.location,
