@@ -264,6 +264,15 @@ function baseServer(
     });
   }
 
+  // Redirect categories pages.
+  app.get(
+    '/:lang/:application/:visibleAddonType(extensions|themes)/categories/',
+    (req, res) => {
+      const { application, lang, visibleAddonType } = req.params;
+      res.redirect(301, `/${lang}/${application}/${visibleAddonType}/`);
+    },
+  );
+
   // Redirect category pages.
   app.get(
     '/:lang/:application/:visibleAddonType(extensions|themes)/:slug/',
