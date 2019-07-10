@@ -81,6 +81,7 @@ export const InstallButtonWrapperBase = (props: InternalProps) => {
         className={makeClassName('InstallButtonWrapper', {
           'InstallButtonWrapper--notFirefox': !isFirefox({ userAgentInfo }),
         })}
+        onClick={() => console.log('wrapper clicked!!!')}
       >
         <AMInstallButton
           addon={addon}
