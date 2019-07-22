@@ -1,0 +1,60 @@
+@import '~amo/css/styles';
+
+.PrimaryHero {
+  background: linear-gradient(#20123a, #054096);
+  color: $white;
+  display: flex;
+  height: 500px;
+  position: relative;
+  width: auto;
+}
+
+.PrimaryHero-image {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+
+  img {
+    align-self: center;
+    height: max-content;
+    width: max-content;
+  }
+}
+
+.PrimaryHero-decoration {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+
+  img {
+    height: auto;
+    width: auto;
+  }
+}
+
+.PrimaryHero-content {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 50%;
+}
+
+.PrimaryHero-content-recommended {
+  font-size: $font-size-m;
+}
+
+.PrimaryHero-content-add-on-name {
+  font-size: $font-size-l;
+  margin: 10px 0;
+}
+
+.PrimaryHero-content-add-on-desc {
+  font-size: $font-size-default;
+  //   line-height: $default-line-height;
+  margin: 10px 0;
+}
+
+.PrimaryHero-content-add-on-link {
+  font-size: $font-size-default;
+  margin: 10px 0;
+}
