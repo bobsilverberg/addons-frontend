@@ -8,20 +8,84 @@ import {
 import { SET_CLIENT_APP } from 'core/constants';
 import { createInternalAddon } from 'core/reducers/addons';
 import { isTheme } from 'core/utils';
-import type { AddonType, ExternalAddonType } from 'core/types/addons';
 import type { SetClientAppAction } from 'core/actions';
+import type {
+  AddonType,
+  ExternalAddonType,
+  PartialExternalAddonType,
+} from 'core/types/addons';
 
 export const FETCH_HOME_ADDONS: 'FETCH_HOME_ADDONS' = 'FETCH_HOME_ADDONS';
 export const LOAD_HOME_ADDONS: 'LOAD_HOME_ADDONS' = 'LOAD_HOME_ADDONS';
 
+export type PrimaryHeroShelfExternalType = {|
+  id: string,
+  guid: string,
+  homepage: string,
+  name: string,
+  type: string,
+|};
+
+export type ExternalPrimaryHeroShelfType = {|
+  gradient: {|
+    start: string,
+    end: string,
+  |},
+  featured_image: string,
+  description: string | null,
+  addon: PartialExternalAddonType | void,
+  external: PrimaryHeroShelfExternalType | void,
+|};
+
+export type PrimaryHeroShelfType = {|
+  gradient: {|
+    start: string,
+    end: string,
+  |},
+  featuredImage: string,
+  description: string | null,
+  addon: AddonType | void,
+  external: PrimaryHeroShelfExternalType | void,
+|};
+
+export type HeroCTAType = {|
+  url: string,
+  text: string,
+|};
+
+export type SecondaryHeroModuleType = {|
+  icon: string,
+  description: string,
+  cta: HeroCTAType,
+|};
+
+export type SecondaryHeroShelfType = {|
+  headline: string,
+  description: string,
+  cta: HeroCTAType,
+  modules: Array<SecondaryHeroModuleType>,
+|};
+
+export type ExternalHeroShelvesType = {|
+  primary: ExternalPrimaryHeroShelfType,
+  secondary: SecondaryHeroShelfType,
+|};
+
+export type HeroShelvesType = {|
+  primary: PrimaryHeroShelfType,
+  secondary: SecondaryHeroShelfType,
+|};
+
 export type HomeState = {
   collections: Array<Object | null>,
+  heroShelves: HeroShelvesType | null,
   resultsLoaded: boolean,
   shelves: { [shelfName: string]: Array<AddonType> | null },
 };
 
 export const initialState: HomeState = {
   collections: [],
+  heroShelves: null,
   resultsLoaded: false,
   shelves: {},
 };
@@ -68,6 +132,7 @@ type ApiAddonsResponse = {|
 
 type LoadHomeAddonsParams = {|
   collections: Array<Object | null>,
+  heroShelves: ExternalHeroShelvesType,
   shelves: { [shelfName: string]: ApiAddonsResponse },
 |};
 
@@ -78,6 +143,7 @@ type LoadHomeAddonsAction = {|
 
 export const loadHomeAddons = ({
   collections,
+  heroShelves,
   shelves,
 }: LoadHomeAddonsParams): LoadHomeAddonsAction => {
   invariant(collections, 'collections is required');
@@ -87,6 +153,7 @@ export const loadHomeAddons = ({
     type: LOAD_HOME_ADDONS,
     payload: {
       collections,
+      heroShelves,
       shelves,
     },
   };
@@ -98,6 +165,23 @@ const createInternalAddons = (
   response: ApiAddonsResponse,
 ): Array<AddonType> => {
   return response.results.map((addon) => createInternalAddon(addon));
+};
+
+export const createInternalHeroShelves = (
+  heroShelves: ExternalHeroShelvesType,
+): HeroShelvesType => {
+  const { primary, secondary } = heroShelves;
+
+  return {
+    primary: {
+      gradient: primary.gradient,
+      featuredImage: primary.featured_image,
+      description: primary.description,
+      addon: primary.addon ? createInternalAddon(primary.addon) : undefined,
+      external: primary.external,
+    },
+    secondary,
+  };
 };
 
 const reducer = (
@@ -115,7 +199,7 @@ const reducer = (
       };
 
     case LOAD_HOME_ADDONS: {
-      const { collections, shelves } = action.payload;
+      const { collections, heroShelves, shelves } = action.payload;
 
       return {
         ...state,
@@ -130,6 +214,7 @@ const reducer = (
           }
           return null;
         }),
+        heroShelves: createInternalHeroShelves(heroShelves),
         resultsLoaded: true,
         shelves: Object.keys(shelves).reduce((shelvesToLoad, shelfName) => {
           const response = shelves[shelfName];

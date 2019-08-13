@@ -77,6 +77,7 @@ export class HomeBase extends React.Component {
     collections: PropTypes.array.isRequired,
     dispatch: PropTypes.func.isRequired,
     errorHandler: PropTypes.object.isRequired,
+    heroShelves: PropTypes.object,
     i18n: PropTypes.object.isRequired,
     includeRecommendedThemes: PropTypes.bool,
     includeTrendingExtensions: PropTypes.bool,
@@ -191,6 +192,7 @@ export class HomeBase extends React.Component {
       clientApp,
       collections,
       errorHandler,
+      heroShelves,
       i18n,
       includeRecommendedThemes,
       includeTrendingExtensions,
@@ -198,6 +200,7 @@ export class HomeBase extends React.Component {
       shelves,
     } = this.props;
 
+    console.log('----- heroShelves: ', heroShelves);
     const enableFeatureRecommendedBadges = _config.get(
       'enableFeatureRecommendedBadges',
     );
@@ -412,6 +415,7 @@ export function mapStateToProps(state) {
   return {
     clientApp: state.api.clientApp,
     collections: state.home.collections,
+    heroShelves: state.home.heroShelves,
     resultsLoaded: state.home.resultsLoaded,
     shelves: state.home.shelves,
   };

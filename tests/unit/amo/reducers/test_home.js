@@ -16,14 +16,21 @@ import {
   createFakeCollectionAddonsListResponse,
   dispatchClientMetadata,
   fakeAddon,
+  fakeHeroShelves,
 } from 'tests/unit/helpers';
 
 describe(__filename, () => {
   describe('reducer', () => {
-    const _loadHomeAddons = ({ store, collections = [], shelves = {} }) => {
+    const _loadHomeAddons = ({
+      store,
+      collections = [],
+      heroShelves = fakeHeroShelves,
+      shelves = {},
+    }) => {
       store.dispatch(
         loadHomeAddons({
           collections,
+          heroShelves,
           shelves,
         }),
       );

@@ -3,6 +3,7 @@ import { oneLine } from 'common-tags';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { getCollectionAddons } from 'amo/api/collections';
+import { getHeroShelves } from 'amo/api/hero';
 import {
   LANDING_PAGE_EXTENSION_COUNT,
   LANDING_PAGE_THEME_COUNT,
@@ -130,9 +131,18 @@ export function* fetchHomeAddons({
       throw error;
     }
 
+    let heroShelves = null;
+    try {
+      heroShelves = yield call(getHeroShelves, { api: state.api });
+    } catch (error) {
+      log.warn(`Home hero shelves failed to load: ${error}`);
+      throw error;
+    }
+
     yield put(
       loadHomeAddons({
         collections,
+        heroShelves,
         shelves,
       }),
     );
