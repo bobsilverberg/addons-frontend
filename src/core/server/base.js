@@ -115,7 +115,9 @@ function renderHTML({ props = {}, pageProps, store }) {
   // This will ensure that no other components in the render tree will
   // modify state before ServerHtml has a chance to serialize it.
   // https://github.com/mozilla/addons-frontend/issues/6729
+
   const appState = store.getState();
+  log.warn(`---- in renderHTML, appState: ${appState}`);
   return ReactDOM.renderToString(
     <ServerHtml {...pageProps} {...props} appState={appState} />,
   );
@@ -329,8 +331,12 @@ function baseServer(
         res.vary(DISCO_TAAR_CLIENT_ID_HEADER);
       }
 
+      _log.warn('---- About to create history');
+
       const history = _createHistory({ req });
+      _log.warn(`---- history: ${history}`);
       const { sagaMiddleware, store } = createStore({ history });
+      _log.warn(`---- store: ${store}`);
 
       let pageProps;
       let runningSagas;
@@ -415,6 +421,9 @@ function baseServer(
       }
 
       const i18n = makeI18n(i18nData, htmlLang);
+
+      _log.warn(`---- store: ${store}`);
+      _log.warn(`---- pageProps.chunkExtractor: ${pageProps.chunkExtractor}`);
 
       const props = {
         component: (

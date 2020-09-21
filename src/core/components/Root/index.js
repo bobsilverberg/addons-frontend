@@ -29,6 +29,7 @@ const Root = ({
 }: Props) => (
   <I18nProvider i18n={i18n}>
     <Provider store={store} key="provider">
+      {console.log('----- in Provider, store: ', store)}
       <ConnectedRouter history={history}>
         <CookiesProvider cookies={cookies}>
           {/* $FlowFixMe: https://github.com/facebook/react/issues/12553 */}

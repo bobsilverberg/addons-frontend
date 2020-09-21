@@ -838,6 +838,11 @@ export function shallowUntilTarget(
     throw new Error('TargetComponent parameter is required');
   }
 
+  console.log(
+    '---- in shallowUntilTarget, componentInstance: ',
+    componentInstance,
+  );
+  console.log('---- in shallowUntilTarget, shallowOptions: ', shallowOptions);
   let root = _shallow(componentInstance, shallowOptions);
 
   if (typeof root.type() === 'string') {
