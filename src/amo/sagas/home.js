@@ -4,6 +4,7 @@ import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { getCollectionAddons } from 'amo/api/collections';
 import { getHeroShelves } from 'amo/api/hero';
+import { getSponsoredAddonsShelf } from 'amo/api/sponsoredAddons';
 import {
   LANDING_PAGE_EXTENSION_COUNT,
   LANDING_PAGE_PROMOTED_EXTENSION_COUNT,
@@ -33,6 +34,7 @@ import type { Saga } from 'core/types/sagas';
 
 export function* fetchHomeData({
   payload: {
+    _config,
     collectionsToFetch,
     errorHandlerId,
     includeRecommendedThemes,
@@ -125,16 +127,6 @@ export function* fetchHomeData({
       },
     };
 
-    const promotedExtensionsParams: SearchParams = {
-      api: state.api,
-      filters: {
-        addonType: ADDON_TYPE_EXTENSION,
-        page_size: String(LANDING_PAGE_PROMOTED_EXTENSION_COUNT),
-        promoted: SPONSORED,
-        sort: SEARCH_SORT_RANDOM,
-      },
-    };
-
     let shelves = {};
     try {
       shelves = yield all({
@@ -147,10 +139,38 @@ export function* fetchHomeData({
         trendingExtensions: includeTrendingExtensions
           ? call(searchApi, trendingExtensionsParams)
           : null,
-        promotedExtensions: call(searchApi, promotedExtensionsParams),
       });
     } catch (error) {
       log.warn(`Home add-ons failed to load: ${error}`);
+      throw error;
+    }
+
+    const promotedExtensionsParams: SearchParams = {
+      api: state.api,
+      filters: {
+        addonType: ADDON_TYPE_EXTENSION,
+        page_size: String(LANDING_PAGE_PROMOTED_EXTENSION_COUNT),
+        promoted: SPONSORED,
+        sort: SEARCH_SORT_RANDOM,
+      },
+    };
+    let sponsoredAddonsShelf = null;
+
+    try {
+      if (_config.get('enableFeatureUseAdzerk')) {
+        sponsoredAddonsShelf = yield call(getSponsoredAddonsShelf, {
+          api: state.api,
+        });
+      } else {
+        const sponsoredAddons = yield call(searchApi, promotedExtensionsParams);
+        sponsoredAddonsShelf = {
+          addons: sponsoredAddons.results,
+          impressionData: '',
+          impressionURL: '',
+        };
+      }
+    } catch (error) {
+      log.warn(`Sponsored addons shelf failed to load: ${error}`);
       throw error;
     }
 
@@ -158,6 +178,7 @@ export function* fetchHomeData({
       loadHomeData({
         collections,
         heroShelves,
+        sponsoredAddonsShelf,
         shelves,
       }),
     );

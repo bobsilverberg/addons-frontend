@@ -274,7 +274,7 @@ export const createPrimaryHeroShelf = ({
   return {
     addon,
     description,
-    external,
+    external: external || fakePrimaryHeroShelfExternal,
     featured_image: featuredImage,
     gradient,
   };
@@ -1312,3 +1312,9 @@ export const createFakeBlockResult = ({
     ...others,
   };
 };
+
+export const fakesponsoredAddonsShelf = Object.freeze({
+  addons: Array(6).fill(fakeAddon),
+  impressionData: '',
+  impressionURL: '',
+});

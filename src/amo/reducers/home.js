@@ -106,10 +106,35 @@ export type HeroShelvesType = {|
   secondary: SecondaryHeroShelfType,
 |};
 
+export type ExternalSponsoredAddonType = {|
+  ...ExternalAddonType,
+  clickURL: string | null,
+  clickData: string | null,
+|};
+
+export type SponsoredAddonType = {|
+  ...AddonType,
+  clickURL: string | null,
+  clickData: string | null,
+|};
+
+export type ExternalSponsoredAddonsShelfType = {|
+  addons: Array<ExternalSponsoredAddonType>,
+  impressionData: string | null,
+  impressionURL: string | null,
+|};
+
+export type SponsoredAddonsShelfType = {|
+  addons: Array<SponsoredAddonType>,
+  impressionData: string | null,
+  impressionURL: string | null,
+|};
+
 export type HomeState = {
   collections: Array<Object | null>,
   heroShelves: HeroShelvesType | null,
   isLoading: boolean,
+  sponsoredAddonsShelf: SponsoredAddonsShelfType | null,
   resetStateOnNextChange: boolean,
   resultsLoaded: boolean,
   shelves: { [shelfName: string]: Array<AddonType> | null },
@@ -119,6 +144,7 @@ export const initialState: HomeState = {
   collections: [],
   heroShelves: null,
   isLoading: false,
+  sponsoredAddonsShelf: null,
   resetStateOnNextChange: false,
   resultsLoaded: false,
   shelves: {},
@@ -131,6 +157,7 @@ export const abortFetchHomeData = (): AbortFetchHomeDataAction => {
 };
 
 type FetchHomeDataParams = {|
+  _config: typeof config,
   collectionsToFetch: Array<Object>,
   errorHandlerId: string,
   includeRecommendedThemes: boolean,
@@ -143,6 +170,7 @@ export type FetchHomeDataAction = {|
 |};
 
 export const fetchHomeData = ({
+  _config = config,
   collectionsToFetch,
   errorHandlerId,
   includeRecommendedThemes,
@@ -154,6 +182,7 @@ export const fetchHomeData = ({
   return {
     type: FETCH_HOME_DATA,
     payload: {
+      _config,
       collectionsToFetch,
       errorHandlerId,
       includeRecommendedThemes,
@@ -170,6 +199,7 @@ type ApiAddonsResponse = {|
 type LoadHomeDataParams = {|
   collections: Array<Object | null>,
   heroShelves: ExternalHeroShelvesType,
+  sponsoredAddonsShelf: ExternalSponsoredAddonsShelfType,
   shelves: { [shelfName: string]: ApiAddonsResponse },
 |};
 
@@ -181,6 +211,7 @@ type LoadHomeDataAction = {|
 export const loadHomeData = ({
   collections,
   heroShelves,
+  sponsoredAddonsShelf,
   shelves,
 }: LoadHomeDataParams): LoadHomeDataAction => {
   invariant(collections, 'collections is required');
@@ -191,6 +222,7 @@ export const loadHomeData = ({
     payload: {
       collections,
       heroShelves,
+      sponsoredAddonsShelf,
       shelves,
     },
   };
@@ -252,6 +284,22 @@ export const createInternalHeroShelves = (
   return shelves;
 };
 
+export const createInternalsponsoredAddonsShelf = (
+  sponsoredAddonsShelf: ExternalSponsoredAddonsShelfType,
+): SponsoredAddonsShelfType | null => {
+  if (!sponsoredAddonsShelf) {
+    return null;
+  }
+
+  const { addons, impressionData, impressionURL } = sponsoredAddonsShelf;
+
+  return {
+    addons: addons.map((addon) => createInternalAddon(addon)),
+    impressionData,
+    impressionURL,
+  };
+};
+
 const reducer = (
   state: HomeState = initialState,
   action: Action,
@@ -275,7 +323,12 @@ const reducer = (
       };
 
     case LOAD_HOME_DATA: {
-      const { collections, heroShelves, shelves } = action.payload;
+      const {
+        collections,
+        heroShelves,
+        sponsoredAddonsShelf,
+        shelves,
+      } = action.payload;
 
       return {
         ...state,
@@ -293,6 +346,9 @@ const reducer = (
         }),
         heroShelves: createInternalHeroShelves(heroShelves),
         isLoading: false,
+        sponsoredAddonsShelf: createInternalsponsoredAddonsShelf(
+          sponsoredAddonsShelf,
+        ),
         resultsLoaded: true,
         shelves: Object.keys(shelves).reduce((shelvesToLoad, shelfName) => {
           const response = shelves[shelfName];

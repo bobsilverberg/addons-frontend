@@ -46,6 +46,7 @@ import {
   dispatchClientMetadata,
   fakeAddon,
   fakeI18n,
+  fakesponsoredAddonsShelf,
   getFakeConfig,
   shallowUntilTarget,
 } from 'tests/unit/helpers';
@@ -79,9 +80,12 @@ describe(__filename, () => {
     store,
     collections = [],
     heroShelves = _createHeroShelves(),
+    sponsoredAddonsShelf = fakesponsoredAddonsShelf,
     shelves = {},
   }) => {
-    store.dispatch(loadHomeData({ collections, heroShelves, shelves }));
+    store.dispatch(
+      loadHomeData({ collections, heroShelves, sponsoredAddonsShelf, shelves }),
+    );
   };
 
   it('renders a Page component passing `true` for `isHomePage`', () => {
@@ -116,11 +120,13 @@ describe(__filename, () => {
     });
 
     const addon = fakeAddon;
-    const promotedExtensions = createAddonsApiResult([addon]);
 
     _loadHomeData({
       store,
-      shelves: { promotedExtensions },
+      sponsoredAddonsShelf: {
+        ...fakesponsoredAddonsShelf,
+        addons: [addon],
+      },
     });
 
     const root = render({
@@ -130,9 +136,8 @@ describe(__filename, () => {
       store,
     });
 
-    expect(root.find(PromotedAddonsCard)).toHaveProp('addons', [
-      createInternalAddon(addon),
-    ]);
+    const { addons } = root.find(PromotedAddonsCard).prop('shelfData');
+    expect(addons).toEqual([createInternalAddon(addon)]);
   });
 
   it('does not render a promoted extensions shelf if turned off', () => {
@@ -140,12 +145,9 @@ describe(__filename, () => {
       clientApp: CLIENT_APP_FIREFOX,
     });
 
-    const addon = fakeAddon;
-    const promotedExtensions = createAddonsApiResult([addon]);
-
     _loadHomeData({
       store,
-      shelves: { promotedExtensions },
+      sponsoredAddonsShelf: fakesponsoredAddonsShelf,
     });
 
     const root = render({
@@ -163,12 +165,12 @@ describe(__filename, () => {
       clientApp: CLIENT_APP_FIREFOX,
     });
 
-    const addon = fakeAddon;
-    const promotedExtensions = createAddonsApiResult(Array(5).fill(addon));
-
     _loadHomeData({
       store,
-      shelves: { promotedExtensions },
+      sponsoredAddonsShelf: {
+        ...fakesponsoredAddonsShelf,
+        addons: Array(5).fill(fakeAddon),
+      },
     });
 
     const root = render({
@@ -178,7 +180,7 @@ describe(__filename, () => {
       store,
     });
 
-    const addons = root.find(PromotedAddonsCard).prop('addons');
+    const { addons } = root.find(PromotedAddonsCard).prop('shelfData');
     expect(addons.length).toEqual(3);
   });
 

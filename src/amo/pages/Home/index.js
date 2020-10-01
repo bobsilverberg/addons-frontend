@@ -85,6 +85,7 @@ export class HomeBase extends React.Component {
     includeRecommendedThemes: PropTypes.bool,
     includeTrendingExtensions: PropTypes.bool,
     isLoading: PropTypes.bool,
+    sponsoredAddonsShelf: PropTypes.object.isRequired,
     resultsLoaded: PropTypes.bool.isRequired,
     shelves: PropTypes.object.isRequired,
   };
@@ -214,6 +215,7 @@ export class HomeBase extends React.Component {
       i18n,
       includeRecommendedThemes,
       includeTrendingExtensions,
+      sponsoredAddonsShelf,
       resultsLoaded,
       shelves,
     } = this.props;
@@ -247,11 +249,13 @@ export class HomeBase extends React.Component {
       return null;
     };
 
-    const { promotedExtensions } = shelves;
-    if (Array.isArray(promotedExtensions)) {
-      // If there are fewer than 6 promoted extensions, just use the first 3.
-      if (promotedExtensions.length < 6) {
-        promotedExtensions.splice(3);
+    if (sponsoredAddonsShelf) {
+      const { addons } = sponsoredAddonsShelf;
+      if (Array.isArray(addons)) {
+        // If there are fewer than 6 promoted extensions, just use the first 3.
+        if (addons.length < 6) {
+          sponsoredAddonsShelf.addons.splice(3);
+        }
       }
     }
 
@@ -290,8 +294,8 @@ export class HomeBase extends React.Component {
             {_config.get('enableFeaturePromotedShelf') && isDesktopSite ? (
               <PromotedAddonsCard
                 addonInstallSource={INSTALL_SOURCE_PROMOTED_SHELF}
-                addons={promotedExtensions}
                 loading={loading}
+                shelfData={sponsoredAddonsShelf}
               />
             ) : null}
 
@@ -424,6 +428,7 @@ export function mapStateToProps(state) {
     collections: state.home.collections,
     heroShelves: state.home.heroShelves,
     isLoading: state.home.isLoading,
+    sponsoredAddonsShelf: state.home.sponsoredAddonsShelf,
     resultsLoaded: state.home.resultsLoaded,
     shelves: state.home.shelves,
   };
