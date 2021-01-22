@@ -1,6 +1,7 @@
 /* global Headers, Response */
 import urllib from 'url';
 
+import { queries, render as rtlRender } from '@testing-library/react';
 import { LOCATION_CHANGE } from 'connected-react-router';
 import PropTypes from 'prop-types';
 import base64url from 'base64url';
@@ -1442,4 +1443,14 @@ export const createInternalSuggestionWithLang = (
   lang = DEFAULT_LANG_IN_TESTS,
 ) => {
   return createInternalSuggestion(suggestion, lang);
+};
+
+const getByClassName = (container, className) => {
+  return container.querySelector(`.${className}`);
+};
+
+export const render = (ui, options = {}) => {
+  const rtlOptions = { queries: { ...queries, getByClassName }, ...options };
+  const result = rtlRender(ui, rtlOptions);
+  return { ...result, root: result.container.firstChild };
 };
