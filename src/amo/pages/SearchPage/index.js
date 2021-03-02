@@ -22,6 +22,7 @@ import type { DispatchFunc } from 'amo/types/redux';
 import type { ReactRouterLocationType } from 'amo/types/router';
 
 type Props = {|
+  isForCategory?: boolean,
   location: ReactRouterLocationType,
 |};
 
@@ -34,6 +35,10 @@ type InternalProps = {|
 |};
 
 export class SearchPageBase extends React.Component<InternalProps> {
+  pageRoute(): string {
+    return this.props.isForCategory ? 'category' : 'search';
+  }
+
   constructor(props: InternalProps) {
     super(props);
 
@@ -76,7 +81,7 @@ export class SearchPageBase extends React.Component<InternalProps> {
       props.dispatch(
         sendServerRedirect({
           status: 301,
-          url: `/${lang}/${clientApp}/search/${queryString}`,
+          url: `/${lang}/${clientApp}/${this.pageRoute()}/${queryString}`,
         }),
       );
     }
@@ -91,6 +96,7 @@ export class SearchPageBase extends React.Component<InternalProps> {
           enableSearchFilters
           filters={filters}
           paginationQueryParams={convertFiltersToQueryParams(filters)}
+          pathname={`/${this.pageRoute()}/`}
         />
       </Page>
     );
