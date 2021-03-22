@@ -119,7 +119,7 @@
   }
 
   @include respond-to(extraLarge) {
-    // display: flex;
+    display: flex;
     grid-column: 2 / -1;
     grid-row: 1 / 2;
   }
