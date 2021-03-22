@@ -195,38 +195,42 @@ export class HeaderBase extends React.Component {
           ) : null}
 
           <div className="Header-user-and-external-links">
-            <GetFirefoxButton
-              buttonType={GET_FIREFOX_BUTTON_TYPE_HEADER}
-              className="Header-download-button Header-button"
-            />
-            <Link
-              className="Header-extension-workshop-link Header-button"
-              href={`${_config.get(
-                'extensionWorkshopUrl',
-              )}/${makeQueryStringWithUTM({
-                utm_content: 'header-link',
-                utm_campaign: null,
-              })}`}
-              external
-              prependClientApp={false}
-              prependLang={false}
-              target="_blank"
-              title={i18n.gettext('Learn how to create extensions and themes')}
-            >
-              {i18n.gettext('Extension Workshop')}
-            </Link>
-            <Link
-              className="Header-developer-hub-link Header-button"
-              href="/developers/"
-              external
-              prependClientApp={false}
-              target="_blank"
-              title={i18n.gettext('Submit and manage extensions and themes')}
-            >
-              {i18n.gettext('Developer Hub')}
-            </Link>
+            <div className="Header-user-and-external-links-container">
+              <GetFirefoxButton
+                buttonType={GET_FIREFOX_BUTTON_TYPE_HEADER}
+                className="Header-download-button Header-button"
+              />
+              <Link
+                className="Header-extension-workshop-link Header-button"
+                href={`${_config.get(
+                  'extensionWorkshopUrl',
+                )}/${makeQueryStringWithUTM({
+                  utm_content: 'header-link',
+                  utm_campaign: null,
+                })}`}
+                external
+                prependClientApp={false}
+                prependLang={false}
+                target="_blank"
+                title={i18n.gettext(
+                  'Learn how to create extensions and themes',
+                )}
+              >
+                {i18n.gettext('Extension Workshop')}
+              </Link>
+              <Link
+                className="Header-developer-hub-link Header-button"
+                href="/developers/"
+                external
+                prependClientApp={false}
+                target="_blank"
+                title={i18n.gettext('Submit and manage extensions and themes')}
+              >
+                {i18n.gettext('Developer Hub')}
+              </Link>
 
-            {this.renderMenuOrAuthButton()}
+              {this.renderMenuOrAuthButton()}
+            </div>
           </div>
 
           <SearchForm className="Header-search-form" pathname="/search/" />

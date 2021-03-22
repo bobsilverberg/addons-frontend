@@ -108,7 +108,6 @@
 .Header-user-and-external-links {
   @include text-align-end();
 
-  // display: grid;
   grid-column: 4;
   grid-row: 1 / 2;
   margin-top: 10px;
@@ -122,6 +121,13 @@
     display: flex;
     grid-column: 2 / -1;
     grid-row: 1 / 2;
+  }
+}
+
+.Header-user-and-external-links-container {
+  width: 100%;
+  @include respond-to(large) {
+    display: flex;
   }
 }
 
