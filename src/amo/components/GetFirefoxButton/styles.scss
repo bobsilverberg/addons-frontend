@@ -3,6 +3,7 @@
 $callout-color: #ffea80;
 
 .GetFirefoxButton {
+  margin: auto;
   white-space: nowrap;
   width: 100%;
 
@@ -18,11 +19,16 @@ $callout-color: #ffea80;
   // background-image: -moz-linear-gradient(top, #FFEA80, #FFEA80);
   border: 1px solid $callout-color;
   // float: left;
-  margin: 16px;
+  margin: 16px 0 16px 0;
   padding: 10px;
   position: relative;
+  text-align: center;
 	// border-radius: 3px;
 	// min-height: 50px;
+
+  @include respond-to(medium) {
+    margin: 16px auto 16px auto;
+  }
 
   &::before {
     border: 0.8em solid transparent;

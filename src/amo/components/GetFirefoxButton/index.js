@@ -6,8 +6,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import { DOWNLOAD_FIREFOX_BASE_URL } from 'amo/constants';
+import { DOWNLOAD_FIREFOX_BASE_URL, RECOMMENDED } from 'amo/constants';
 import { makeQueryStringWithUTM } from 'amo/utils';
+import { getPromotedCategory } from 'amo/utils/addons';
 import translate from 'amo/i18n/translate';
 import tracking from 'amo/tracking';
 import { isFirefox } from 'amo/utils/compatibility';
@@ -39,24 +40,42 @@ export type Props = {|
   className?: string,
 |};
 
+export type DeafultProps = {|
+  _encode: typeof encode,
+  _getPromotedCategory: typeof getPromotedCategory,
+  _tracking: typeof tracking,
+|};
+
 type PropsFromState = {|
+  clientApp: string,
   userAgentInfo: UserAgentInfoType,
 |};
 
 type InternalProps = {|
   ...Props,
+  ...DeafultProps,
   ...PropsFromState,
-  _encode?: typeof encode,
-  _tracking: typeof tracking,
   i18n: I18nType,
 |};
 
-export const GetFirefoxButtonBase = (
-  props: InternalProps,
-): null | React.Node => {
-  const { addon, buttonType, className, i18n, userAgentInfo } = props;
-  const _encode = props._encode || encode;
-  const _tracking = props._tracking || tracking;
+export const GetFirefoxButtonBase = ({
+  _encode = encode,
+  _getPromotedCategory = getPromotedCategory,
+  _tracking = tracking,
+  addon,
+  buttonType,
+  className,
+  clientApp,
+  i18n,
+  userAgentInfo,
+}: InternalProps): null | React.Node => {
+  const promotedCategory = _getPromotedCategory({
+    addon,
+    clientApp,
+    forBadging: true,
+  });
+
+  const supportsRTAMO = promotedCategory === RECOMMENDED;
 
   const onButtonClick = () => {
     _tracking.sendEvent({
@@ -84,7 +103,10 @@ export const GetFirefoxButtonBase = (
         addon,
         `addon is required for buttonType ${GET_FIREFOX_BUTTON_TYPE_ADDON}`,
       );
-      buttonText = i18n.gettext('Only with Firefox—Get Firefox Now');
+      buttonText = supportsRTAMO
+        ? // TODO: This could be extension or theme.
+          i18n.gettext('Download Firefox and get the extension')
+        : i18n.gettext('Download Firefox');
       puffy = true;
       utmContent = addon.guid ? `rta:${_encode(addon.guid)}` : '';
       break;
@@ -112,7 +134,7 @@ export const GetFirefoxButtonBase = (
         {i18n.gettext(`You'll need Firefox to use this extension`)}
       </div>
       <Button
-        buttonType="confirm"
+        buttonType="action"
         className={makeClassName('GetFirefoxButton', className)}
         href={`${DOWNLOAD_FIREFOX_BASE_URL}${makeQueryStringWithUTM({
           utm_content: utmContent,
@@ -129,6 +151,7 @@ export const GetFirefoxButtonBase = (
 
 function mapStateToProps(state: AppState): PropsFromState {
   return {
+    clientApp: state.api.clientApp,
     userAgentInfo: state.api.userAgentInfo,
   };
 }

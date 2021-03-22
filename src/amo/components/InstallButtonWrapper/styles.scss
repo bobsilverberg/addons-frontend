@@ -1,6 +1,9 @@
 @import '~amo/css/styles';
 
 .InstallButtonWrapper {
+  display: flex;
+  flex-direction: column;
+
   @include respond-to(medium) {
     @include margin-start(auto);
 
