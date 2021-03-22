@@ -102,18 +102,28 @@ export const GetFirefoxButtonBase = (
   }
 
   return (
-    <Button
-      buttonType="confirm"
-      className={makeClassName('GetFirefoxButton', className)}
-      href={`${DOWNLOAD_FIREFOX_BASE_URL}${makeQueryStringWithUTM({
-        utm_content: utmContent,
-      })}`}
-      micro={micro}
-      onClick={onButtonClick}
-      puffy={puffy}
-    >
-      {buttonText}
-    </Button>
+    <>
+      <div
+        className={makeClassName('GetFirefoxButton-callout', {
+          'GetFirefoxButton-callout--top':
+            buttonType === GET_FIREFOX_BUTTON_TYPE_ADDON,
+        })}
+      >
+        {i18n.gettext(`You'll need Firefox to use this extension`)}
+      </div>
+      <Button
+        buttonType="confirm"
+        className={makeClassName('GetFirefoxButton', className)}
+        href={`${DOWNLOAD_FIREFOX_BASE_URL}${makeQueryStringWithUTM({
+          utm_content: utmContent,
+        })}`}
+        micro={micro}
+        onClick={onButtonClick}
+        puffy={puffy}
+      >
+        {buttonText}
+      </Button>
+    </>
   );
 };
 

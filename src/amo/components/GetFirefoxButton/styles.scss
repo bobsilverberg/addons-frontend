@@ -1,5 +1,7 @@
 @import '~amo/css/styles';
 
+$callout-color: #ffea80;
+
 .GetFirefoxButton {
   white-space: nowrap;
   width: 100%;
@@ -9,4 +11,36 @@
     margin-bottom: 12px;
     width: auto;
   }
+}
+
+.GetFirefoxButton-callout {
+  background-color: $callout-color;
+  // background-image: -moz-linear-gradient(top, #FFEA80, #FFEA80);
+  border: 1px solid $callout-color;
+  // float: left;
+  margin: 16px;
+  padding: 10px;
+  position: relative;
+	// border-radius: 3px;
+	// min-height: 50px;
+
+  &::before {
+    border: 0.8em solid transparent;
+    content: "";
+    height: 0;
+    position: absolute;
+    width: 0;
+  }
+}
+
+.GetFirefoxButton-callout--top::before {
+  border-top: 10px solid $callout-color;
+  bottom: -20px;
+  left: 45%;
+}
+
+.GetFirefoxButton-callout--left::before {
+	border-left: 10px solid $callout-color;
+  right: -20px;
+	top: 40%;
 }
