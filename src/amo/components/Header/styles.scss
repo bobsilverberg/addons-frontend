@@ -126,7 +126,7 @@
 
 .Header-user-and-external-links-container {
   width: 100%;
-  @include respond-to(large) {
+  @include respond-to(extraLarge) {
     display: flex;
   }
 }
@@ -141,7 +141,7 @@
 .Header-extension-workshop-link {
   display: none;
 
-  @include respond-to(extraLarge) {
+  @include respond-to(extraExtraLarge) {
     &,
     &:link {
       color: $white;
@@ -179,7 +179,7 @@
 }
 
 .Header-authenticate-button {
-  @include margin-start(6px);
+  @include margin-start(auto);
 
   white-space: nowrap;
 
@@ -187,8 +187,11 @@
     padding: 0;
   }
 
-  @include respond-to(medium) {
-    @include margin-start(12px);
+  @include respond-to(extraExtraLarge) {
+    &,
+    &:link {
+      @include margin-start(12px);
+    }
   }
 }
 
