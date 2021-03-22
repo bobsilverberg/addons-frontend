@@ -134,7 +134,7 @@
 .Header-extension-workshop-link {
   display: none;
 
-  @include respond-to(large) {
+  @include respond-to(extraLarge) {
     &,
     &:link {
       color: $white;

@@ -3,6 +3,7 @@
 $callout-color: #ffea80;
 
 .GetFirefoxButton--in-headercallout {
+  align-items: flex-end;
   display: flex;
 }
 
@@ -14,6 +15,7 @@ $callout-color: #ffea80;
   @include respond-to(medium) {
     align-self: flex-end;
     margin-bottom: 12px;
+    margin-top: 0;
     width: auto;
   }
 }
@@ -55,7 +57,7 @@ $callout-color: #ffea80;
 .GetFirefoxButton-callout--left {
   border-radius: 2px;
   font-size: $font-size-xs;
-  // height: auto;
+  height: fit-content;
   justify-content: center;
   letter-spacing: 0.01rem;
   margin: 0 8px 12px auto;
