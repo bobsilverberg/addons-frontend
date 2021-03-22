@@ -108,6 +108,7 @@
 .Header-user-and-external-links {
   @include text-align-end();
 
+  display: flex;
   grid-column: 4;
   grid-row: 1 / 2;
   margin-top: 10px;
@@ -136,14 +137,30 @@
   @include respond-to(large) {
     &,
     &:link {
-      @include margin-start(12px);
-
       color: $white;
       display: inline-block;
       font-size: $font-size-s;
       font-weight: normal;
       padding-top: 4px;
       text-decoration: none;
+    }
+  }
+}
+
+.Header-developer-hub-link {
+  @include respond-to(large) {
+    &,
+    &:link {
+      @include margin-start(12px);
+    }
+  }
+}
+
+.Header-extension-workshop-link {
+  @include respond-to(large) {
+    &,
+    &:link {
+      @include margin-start(auto);
     }
   }
 }

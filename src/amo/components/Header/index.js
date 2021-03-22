@@ -195,6 +195,10 @@ export class HeaderBase extends React.Component {
           ) : null}
 
           <div className="Header-user-and-external-links">
+            <GetFirefoxButton
+              buttonType={GET_FIREFOX_BUTTON_TYPE_HEADER}
+              className="Header-download-button Header-button"
+            />
             <Link
               className="Header-extension-workshop-link Header-button"
               href={`${_config.get(
@@ -221,10 +225,6 @@ export class HeaderBase extends React.Component {
             >
               {i18n.gettext('Developer Hub')}
             </Link>
-            <GetFirefoxButton
-              buttonType={GET_FIREFOX_BUTTON_TYPE_HEADER}
-              className="Header-download-button Header-button"
-            />
 
             {this.renderMenuOrAuthButton()}
           </div>

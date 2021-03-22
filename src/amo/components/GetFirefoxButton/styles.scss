@@ -2,7 +2,11 @@
 
 $callout-color: #ffea80;
 
-.GetFirefoxButton {
+.GetFirefoxButton--in-headercallout {
+  display: flex;
+}
+
+.GetFirefoxButton-button {
   margin: auto;
   white-space: nowrap;
   width: 100%;
@@ -19,8 +23,6 @@ $callout-color: #ffea80;
   // background-image: -moz-linear-gradient(top, #FFEA80, #FFEA80);
   border: 1px solid $callout-color;
   // float: left;
-  margin: 16px 0 16px 0;
-  padding: 10px;
   position: relative;
   text-align: center;
 	// border-radius: 3px;
@@ -39,14 +41,29 @@ $callout-color: #ffea80;
   }
 }
 
+.GetFirefoxButton-callout--top {
+  margin: 16px 0 16px 0;
+  padding: 10px;
+}
+
 .GetFirefoxButton-callout--top::before {
   border-top: 10px solid $callout-color;
   bottom: -20px;
   left: 45%;
 }
 
+.GetFirefoxButton-callout--left {
+  border-radius: 2px;
+  font-size: $font-size-xs;
+  // height: auto;
+  justify-content: center;
+  letter-spacing: 0.01rem;
+  margin: 0 8px 12px auto;
+  padding: 0 8px 0 8px;
+}
+
 .GetFirefoxButton-callout--left::before {
 	border-left: 10px solid $callout-color;
   right: -20px;
-	top: 40%;
+	top: 10%;
 }

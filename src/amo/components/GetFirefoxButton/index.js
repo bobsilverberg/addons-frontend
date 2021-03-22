@@ -124,18 +124,25 @@ export const GetFirefoxButtonBase = ({
   }
 
   return (
-    <>
+    <div
+      className={makeClassName('GetFirefoxButton', {
+        'GetFirefoxButton--in-headercallout':
+          buttonType === GET_FIREFOX_BUTTON_TYPE_HEADER,
+      })}
+    >
       <div
         className={makeClassName('GetFirefoxButton-callout', {
           'GetFirefoxButton-callout--top':
             buttonType === GET_FIREFOX_BUTTON_TYPE_ADDON,
+          'GetFirefoxButton-callout--left':
+            buttonType === GET_FIREFOX_BUTTON_TYPE_HEADER,
         })}
       >
         {i18n.gettext(`You'll need Firefox to use this extension`)}
       </div>
       <Button
         buttonType="action"
-        className={makeClassName('GetFirefoxButton', className)}
+        className={makeClassName('GetFirefoxButton-button', className)}
         href={`${DOWNLOAD_FIREFOX_BASE_URL}${makeQueryStringWithUTM({
           utm_content: utmContent,
         })}`}
@@ -145,7 +152,7 @@ export const GetFirefoxButtonBase = ({
       >
         {buttonText}
       </Button>
-    </>
+    </div>
   );
 };
 
