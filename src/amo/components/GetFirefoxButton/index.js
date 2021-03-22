@@ -6,8 +6,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import { DOWNLOAD_FIREFOX_BASE_URL } from 'amo/constants';
+import {
+  ADDON_TYPE_STATIC_THEME,
+  CLIENT_APP_FIREFOX,
+  DOWNLOAD_FIREFOX_BASE_URL,
+  RECOMMENDED,
+} from 'amo/constants';
 import { makeQueryStringWithUTM } from 'amo/utils';
+import { getPromotedCategory } from 'amo/utils/addons';
 import translate from 'amo/i18n/translate';
 import tracking from 'amo/tracking';
 import { isFirefox } from 'amo/utils/compatibility';
@@ -39,24 +45,43 @@ export type Props = {|
   className?: string,
 |};
 
+export type DeafultProps = {|
+  _encode: typeof encode,
+  _getPromotedCategory: typeof getPromotedCategory,
+  _tracking: typeof tracking,
+|};
+
 type PropsFromState = {|
+  clientApp: string,
   userAgentInfo: UserAgentInfoType,
 |};
 
 type InternalProps = {|
   ...Props,
+  ...DeafultProps,
   ...PropsFromState,
-  _encode?: typeof encode,
-  _tracking: typeof tracking,
   i18n: I18nType,
 |};
 
-export const GetFirefoxButtonBase = (
-  props: InternalProps,
-): null | React.Node => {
-  const { addon, buttonType, className, i18n, userAgentInfo } = props;
-  const _encode = props._encode || encode;
-  const _tracking = props._tracking || tracking;
+export const GetFirefoxButtonBase = ({
+  _encode = encode,
+  _getPromotedCategory = getPromotedCategory,
+  _tracking = tracking,
+  addon,
+  buttonType,
+  className,
+  clientApp,
+  i18n,
+  userAgentInfo,
+}: InternalProps): null | React.Node => {
+  const promotedCategory = _getPromotedCategory({
+    addon,
+    clientApp,
+    forBadging: true,
+  });
+
+  const supportsRTAMO =
+    promotedCategory === RECOMMENDED && clientApp === CLIENT_APP_FIREFOX;
 
   const onButtonClick = () => {
     _tracking.sendEvent({
@@ -74,6 +99,7 @@ export const GetFirefoxButtonBase = (
   }
 
   let buttonText;
+  let calloutText;
   let micro = false;
   let puffy = false;
   let utmContent;
@@ -84,13 +110,31 @@ export const GetFirefoxButtonBase = (
         addon,
         `addon is required for buttonType ${GET_FIREFOX_BUTTON_TYPE_ADDON}`,
       );
-      buttonText = i18n.gettext('Only with Firefox—Get Firefox Now');
+      const downloadTextForRTAMO =
+        addon.type === ADDON_TYPE_STATIC_THEME
+          ? i18n.gettext('Download Firefox and get the theme')
+          : i18n.gettext('Download Firefox and get the extension');
+      buttonText = supportsRTAMO
+        ? downloadTextForRTAMO
+        : i18n.gettext('Download Firefox');
+      // TODO: This could be extension or theme.
+      calloutText =
+        addon.type === ADDON_TYPE_STATIC_THEME
+          ? i18n.gettext(`You'll need Firefox to use this theme`)
+          : i18n.gettext(`You'll need Firefox to use this extension`);
       puffy = true;
       utmContent = addon.guid ? `rta:${_encode(addon.guid)}` : '';
       break;
     }
     case GET_FIREFOX_BUTTON_TYPE_HEADER: {
       buttonText = i18n.gettext('Download Firefox');
+      calloutText =
+        clientApp === CLIENT_APP_FIREFOX
+          ? i18n.gettext(
+              `You'll need Firefox to use these extensions and themes`,
+            )
+          : i18n.gettext(`You'll need Firefox to use these extensions`);
+
       micro = true;
       utmContent = 'header-download-button';
       break;
@@ -102,23 +146,41 @@ export const GetFirefoxButtonBase = (
   }
 
   return (
-    <Button
-      buttonType="confirm"
-      className={makeClassName('GetFirefoxButton', className)}
-      href={`${DOWNLOAD_FIREFOX_BASE_URL}${makeQueryStringWithUTM({
-        utm_content: utmContent,
-      })}`}
-      micro={micro}
-      onClick={onButtonClick}
-      puffy={puffy}
+    <div
+      className={makeClassName('GetFirefoxButton', {
+        'GetFirefoxButton--in-headercallout':
+          buttonType === GET_FIREFOX_BUTTON_TYPE_HEADER,
+      })}
     >
-      {buttonText}
-    </Button>
+      <div
+        className={makeClassName('GetFirefoxButton-callout', {
+          'GetFirefoxButton-callout--top':
+            buttonType === GET_FIREFOX_BUTTON_TYPE_ADDON,
+          'GetFirefoxButton-callout--left':
+            buttonType === GET_FIREFOX_BUTTON_TYPE_HEADER,
+        })}
+      >
+        {calloutText}
+      </div>
+      <Button
+        buttonType="action"
+        className={makeClassName('GetFirefoxButton-button', className)}
+        href={`${DOWNLOAD_FIREFOX_BASE_URL}${makeQueryStringWithUTM({
+          utm_content: utmContent,
+        })}`}
+        micro={micro}
+        onClick={onButtonClick}
+        puffy={puffy}
+      >
+        {buttonText}
+      </Button>
+    </div>
   );
 };
 
 function mapStateToProps(state: AppState): PropsFromState {
   return {
+    clientApp: state.api.clientApp,
     userAgentInfo: state.api.userAgentInfo,
   };
 }

@@ -1,10 +1,27 @@
 @import '~amo/css/styles';
 
 .InstallButtonWrapper {
+  display: flex;
+  flex-direction: column;
+
   @include respond-to(medium) {
     @include margin-start(auto);
 
     align-self: center;
+  }
+
+  .GetFirefoxButton {
+    display: flex;
+    flex-direction: column;
+
+    @include respond-to(medium) {
+      justify-content: center;
+      width: fit-content;
+
+      .GetFirefoxButton-callout {
+        width: 100%;
+      }
+    }
   }
 }
 

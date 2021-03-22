@@ -150,6 +150,7 @@ export class HeaderBase extends React.Component {
       </DropdownMenu>
     ) : (
       <AuthenticateButton
+        buttonType="none"
         className="Header-authenticate-button Header-button"
         noIcon
       />
@@ -229,13 +230,14 @@ export class HeaderBase extends React.Component {
           ) : null}
 
           <div className="Header-user-and-external-links">
-            {otherSiteLinks}
-            <GetFirefoxButton
-              buttonType={GET_FIREFOX_BUTTON_TYPE_HEADER}
-              className="Header-download-button Header-button"
-            />
-
-            {this.renderMenuOrAuthButton()}
+            <div className="Header-user-and-external-links-container">
+              <GetFirefoxButton
+                buttonType={GET_FIREFOX_BUTTON_TYPE_HEADER}
+                className="Header-download-button Header-button"
+              />
+              {otherSiteLinks}
+              {this.renderMenuOrAuthButton()}
+            </div>
           </div>
 
           <SearchForm

@@ -118,8 +118,16 @@
   }
 
   @include respond-to(extraLarge) {
+    display: flex;
     grid-column: 2 / -1;
     grid-row: 1 / 2;
+  }
+}
+
+.Header-user-and-external-links-container {
+  width: 100%;
+  @include respond-to(extraLarge) {
+    display: flex;
   }
 }
 
@@ -133,17 +141,33 @@
 .Header-extension-workshop-link {
   display: none;
 
-  @include respond-to(large) {
+  @include respond-to(extraExtraLarge) {
     &,
     &:link {
-      @include margin-start(12px);
-
       color: $white;
       display: inline-block;
       font-size: $font-size-s;
       font-weight: normal;
       padding-top: 4px;
       text-decoration: none;
+    }
+  }
+}
+
+.Header-developer-hub-link {
+  @include respond-to(large) {
+    &,
+    &:link {
+      @include margin-start(12px);
+    }
+  }
+}
+
+.Header-extension-workshop-link {
+  @include respond-to(large) {
+    &,
+    &:link {
+      @include margin-start(auto);
     }
   }
 }
@@ -155,17 +179,27 @@
 }
 
 .Header-authenticate-button {
-  @include margin-start(6px);
+  @include margin-start(auto);
 
+  font-size: $font-size-xs;
   white-space: nowrap;
+
+  &:link {
+    color: white;
+    font-weight: 300;
+  }
 
   .DropdownMenu-button {
     padding: 0;
   }
 
-  @include respond-to(medium) {
-    @include margin-start(12px);
-  }
+  // I think we need this for non-Firefox
+  // @include respond-to(extraExtraLarge) {
+  //   &,
+  //   &:link {
+  //     @include margin-start(12px);
+  //   }
+  // }
 }
 
 .Header-SectionLinks {
