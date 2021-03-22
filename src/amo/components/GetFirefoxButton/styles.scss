@@ -3,8 +3,9 @@
 $callout-color: #ffea80;
 
 .GetFirefoxButton--in-headercallout {
-  align-items: flex-end;
+  align-items: flex-start;
   display: flex;
+  grid-column: 1;
 }
 
 .GetFirefoxButton-button {

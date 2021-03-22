@@ -108,7 +108,7 @@
 .Header-user-and-external-links {
   @include text-align-end();
 
-  display: flex;
+  // display: grid;
   grid-column: 4;
   grid-row: 1 / 2;
   margin-top: 10px;
@@ -119,6 +119,7 @@
   }
 
   @include respond-to(extraLarge) {
+    // display: flex;
     grid-column: 2 / -1;
     grid-row: 1 / 2;
   }
