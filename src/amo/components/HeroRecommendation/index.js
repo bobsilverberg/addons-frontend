@@ -5,6 +5,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
+import { NOT_IN_EXPERIMENT, withExperiment } from 'amo/withExperiment';
 import AppBanner from 'amo/components/AppBanner';
 import Link from 'amo/components/Link';
 import WrongPlatformWarning from 'amo/components/WrongPlatformWarning';
@@ -333,6 +334,14 @@ const mapStateToProps = (state: AppState): PropsFromState => {
 const HeroRecommendation: React.ComponentType<Props> = compose(
   connect(mapStateToProps),
   translate(),
+  withExperiment({
+    id: '20210219_Hero-test',
+    variants: [
+      { id: 'variant-a', percentage: 0.5 },
+      { id: 'variant-b', percentage: 0.5 },
+      // { id: NOT_IN_EXPERIMENT, percentage: 0.1 },
+    ],
+  }),
 )(HeroRecommendationBase);
 
 export default HeroRecommendation;

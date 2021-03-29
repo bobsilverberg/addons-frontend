@@ -3,16 +3,19 @@ import { shallow } from 'enzyme';
 import * as React from 'react';
 
 import {
+  EXPERIMENT_COOKIE_NAME,
   EXPERIMENT_ENROLLMENT_CATEGORY,
   EXPERIMENT_ID_REGEXP,
   NOT_IN_EXPERIMENT,
   defaultCookieConfig,
+  getRegisteredExperiments,
   getVariant,
   withExperiment,
 } from 'amo/withExperiment';
 import {
   createFakeTracking,
   fakeCookies,
+  fakeVariant,
   getFakeConfig,
 } from 'tests/unit/helpers';
 
@@ -28,7 +31,7 @@ describe(__filename, () => {
   const renderWithExperiment = ({
     props,
     experimentProps,
-    context = fakeCookies(),
+    cookies = fakeCookies(),
   } = {}) => {
     const id = makeId('some-id');
     const allExperimentProps = {
@@ -63,7 +66,7 @@ describe(__filename, () => {
     // 1. Render everything
     const root = shallow(<SomeComponent {...allProps} />);
     // 2. Get and render the withExperiment HOC (inside withCookies() HOC)
-    return shallow(root.props().children(context));
+    return shallow(root.props().children(cookies));
   };
 
   const render = (props = {}) => {
@@ -73,8 +76,13 @@ describe(__filename, () => {
   };
 
   it('injects a variant prop', () => {
-    const root = render();
-    expect(root).toHaveProp('variant');
+    const id = makeId('some-id');
+    const variantId = 'some-variant-id';
+    const _getRegisteredExperiments = sinon.stub().returns({ [id]: variantId });
+
+    const root = render({ id, props: { _getRegisteredExperiments } });
+
+    expect(root).toHaveProp('variant', variantId);
   });
 
   it('injects an isExperimentEnabled prop', () => {
@@ -83,34 +91,75 @@ describe(__filename, () => {
   });
 
   it('injects an isUserInExperiment prop', () => {
-    const root = render();
+    const id = makeId('some-id');
+    const _getRegisteredExperiments = sinon
+      .stub()
+      .returns({ [id]: 'some-variant-id' });
+
+    const root = render({ id, props: { _getRegisteredExperiments } });
+
     expect(root).toHaveProp('isUserInExperiment', true);
   });
 
-  it('gets a cookie upon construction', () => {
+  it('calls getRegisteredExperiments to read the cookie upon construction and render', () => {
+    const _getRegisteredExperiments = sinon.stub().returns({});
     const cookies = fakeCookies();
 
-    // `react-cookie` uses the React (stable) Context API.
-    render({ context: cookies });
+    render({ cookies, props: { _getRegisteredExperiments } });
 
-    sinon.assert.called(cookies.get);
+    sinon.assert.alwaysCalledWith(_getRegisteredExperiments, cookies);
+    sinon.assert.callCount(_getRegisteredExperiments, 2);
   });
 
-  it('creates a cookie upon construction if none has been loaded', () => {
-    const id = makeId('hero');
-    const cookies = fakeCookies({
-      get: sinon.stub().returns(undefined),
+  it('deletes the data for the current experiment from the cookie if the experiment is disabled', () => {
+    const experimentId = makeId('thisExperiment');
+    const anotherExperimentId = makeId('anotherExperiment');
+    const variantId = 'some-variant-id';
+    const _getRegisteredExperiments = sinon.stub().returns({
+      [experimentId]: variantId,
+      [anotherExperimentId]: variantId,
+    });
+    const cookies = fakeCookies();
+    const _config = getFakeConfig({
+      experiments: {
+        [experimentId]: false,
+      },
     });
 
-    // `react-cookie` uses the React (stable) Context API.
-    const root = render({ context: cookies, experimentProps: { id } });
+    render({
+      cookies,
+      experimentProps: { id: experimentId },
+      props: { _config, _getRegisteredExperiments },
+    });
 
     sinon.assert.calledWith(
       cookies.set,
-      `${id}Experiment`,
-      root.instance().experimentCookie,
+      EXPERIMENT_COOKIE_NAME,
+      JSON.stringify({ [anotherExperimentId]: variantId }),
       defaultCookieConfig,
     );
+  });
+
+  it('does not delete the data for the current experiment from the cookie if the experiment is disabled and the current experiment is not included in the cookie', () => {
+    const experimentId = makeId('thisExperiment');
+    const anotherExperimentId = makeId('anotherExperiment');
+    const _getRegisteredExperiments = sinon.stub().returns({
+      [anotherExperimentId]: 'some-variant-id',
+    });
+    const cookies = fakeCookies();
+    const _config = getFakeConfig({
+      experiments: {
+        [experimentId]: false,
+      },
+    });
+
+    render({
+      cookies,
+      experimentProps: { id: experimentId },
+      props: { _config, _getRegisteredExperiments },
+    });
+
+    sinon.assert.notCalled(cookies.set);
   });
 
   it('calls getVariant to set a value for a cookie upon construction if none has been loaded', () => {
@@ -124,9 +173,8 @@ describe(__filename, () => {
     ];
     const _getVariant = sinon.stub().returns(variants[0]);
 
-    // `react-cookie` uses the React (stable) Context API.
     render({
-      context: cookies,
+      cookies,
       experimentProps: { id, variants },
       props: { _getVariant },
     });
@@ -135,70 +183,106 @@ describe(__filename, () => {
 
     sinon.assert.calledWith(
       cookies.set,
-      `${id}Experiment`,
-      variants[0].id,
+      EXPERIMENT_COOKIE_NAME,
+      JSON.stringify({ [id]: variants[0].id }),
       defaultCookieConfig,
     );
   });
 
-  it('sends an enrollment event upon construction if no cookie has been loaded', () => {
-    const id = makeId('hero');
-    const cookies = fakeCookies({
-      get: sinon.stub().returns(undefined),
+  it('creates a cookie upon construction if the current experiment is not already in the cookie', () => {
+    const experimentId = makeId('thisExperiment');
+    const anotherExperimentId = makeId('anotherExperiment');
+    const variantId = 'some-variant-id';
+    const _getRegisteredExperiments = sinon.stub().returns({
+      [anotherExperimentId]: variantId,
     });
+    const _getVariant = sinon.stub().returns({ ...fakeVariant, id: variantId });
+
+    const cookies = fakeCookies();
+
+    render({
+      cookies,
+      experimentProps: { id: experimentId },
+      props: { _getRegisteredExperiments, _getVariant },
+    });
+
+    sinon.assert.calledWith(
+      cookies.set,
+      EXPERIMENT_COOKIE_NAME,
+      JSON.stringify({
+        [anotherExperimentId]: variantId,
+        [experimentId]: variantId,
+      }),
+      defaultCookieConfig,
+    );
+  });
+
+  it('does not update the cookie if the current experiment is already in the cookie', () => {
+    const id = makeId('thisExperiment');
+    const _getRegisteredExperiments = sinon.stub().returns({
+      [id]: 'some-variant-id',
+    });
+
+    const cookies = fakeCookies();
+
+    render({
+      cookies,
+      experimentProps: { id },
+      props: { _getRegisteredExperiments },
+    });
+
+    sinon.assert.notCalled(cookies.set);
+  });
+
+  it('sends an enrollment event upon construction if the experiment is not already present in the cookie', () => {
+    const experimentId = makeId('thisExperiment');
+    const anotherExperimentId = makeId('anotherExperiment');
+    const variantId = 'some-variant-id';
+    const _getRegisteredExperiments = sinon.stub().returns({
+      [anotherExperimentId]: variantId,
+    });
+    const _getVariant = sinon.stub().returns({ ...fakeVariant, id: variantId });
     const _tracking = createFakeTracking();
 
-    // `react-cookie` uses the React (stable) Context API.
-    const root = render({
-      context: cookies,
-      experimentProps: { _tracking, id },
+    const cookies = fakeCookies();
+
+    render({
+      cookies,
+      experimentProps: { _tracking, id: experimentId },
+      props: { _getRegisteredExperiments, _getVariant },
     });
 
     sinon.assert.calledWith(_tracking.sendEvent, {
-      action: root.instance().experimentCookie,
-      category: [EXPERIMENT_ENROLLMENT_CATEGORY, id].join(' '),
+      action: variantId,
+      category: [EXPERIMENT_ENROLLMENT_CATEGORY, experimentId].join(' '),
     });
   });
 
   it('does not send an enrollment event upon construction if the user is not in the experiment', () => {
-    const cookies = fakeCookies({
-      get: sinon.stub().returns(undefined),
-    });
+    const _getRegisteredExperiments = sinon.stub().returns({});
     const _tracking = createFakeTracking();
-    const variants = [{ id: NOT_IN_EXPERIMENT, percentage: 1 }];
+    const _getVariant = sinon
+      .stub()
+      .returns({ ...fakeVariant, id: NOT_IN_EXPERIMENT });
 
-    // `react-cookie` uses the React (stable) Context API.
     render({
-      context: cookies,
-      experimentProps: { _tracking, variants },
+      experimentProps: { _tracking },
+      props: { _getRegisteredExperiments, _getVariant },
     });
 
     sinon.assert.notCalled(_tracking.sendEvent);
   });
 
-  it('does not create a cookie upon construction if one has been loaded', () => {
+  it('does not send an enrollment event upon construction if the user is in the experiment', () => {
     const id = makeId('hero');
-    const cookies = fakeCookies({
-      get: sinon.stub().returns(`${id}Experiment`),
-    });
-
-    // `react-cookie` uses the React (stable) Context API.
-    render({ context: cookies, experimentProps: { id } });
-
-    sinon.assert.notCalled(cookies.set);
-  });
-
-  it('does not send an enrollment event upon construction if a cookie has been loaded', () => {
-    const id = makeId('hero');
-    const cookies = fakeCookies({
-      get: sinon.stub().returns(`${id}Experiment`),
+    const _getRegisteredExperiments = sinon.stub().returns({
+      [id]: 'some-variant-id',
     });
     const _tracking = createFakeTracking();
 
-    // `react-cookie` uses the React (stable) Context API.
     render({
-      context: cookies,
       experimentProps: { _tracking, id },
+      props: { _getRegisteredExperiments },
     });
 
     sinon.assert.notCalled(_tracking.sendEvent);
@@ -206,9 +290,7 @@ describe(__filename, () => {
 
   it('does not send an enrollment event upon construction if the experiment is disabled', () => {
     const id = makeId('hero');
-    const cookies = fakeCookies({
-      get: sinon.stub().returns(undefined),
-    });
+    const _getRegisteredExperiments = sinon.stub().returns({});
     const _config = getFakeConfig({
       experiments: {
         [id]: false,
@@ -216,10 +298,8 @@ describe(__filename, () => {
     });
     const _tracking = createFakeTracking();
 
-    // `react-cookie` uses the React (stable) Context API.
     render({
-      context: cookies,
-      props: { _config },
+      props: { _config, _getRegisteredExperiments },
       experimentProps: { _tracking, id },
     });
 
@@ -231,16 +311,15 @@ describe(__filename, () => {
     const cookies = fakeCookies();
     const cookieConfig = { path: '/test' };
 
-    const root = render({
-      // `react-cookie` uses the React (stable) Context API.
-      context: cookies,
+    render({
+      cookies,
       experimentProps: { id, cookieConfig },
     });
 
     sinon.assert.calledWith(
       cookies.set,
-      `${id}Experiment`,
-      root.instance().experimentCookie,
+      EXPERIMENT_COOKIE_NAME,
+      sinon.match(id),
       cookieConfig,
     );
   });
@@ -249,21 +328,6 @@ describe(__filename, () => {
     const SomeComponent = renderWithExperiment();
 
     expect(SomeComponent.name()).toMatch(/WithExperiment\(SomeComponentBase\)/);
-  });
-
-  it('can be disabled by configuration', () => {
-    const id = makeId('disabled_experiment');
-    const cookies = fakeCookies();
-    const _config = getFakeConfig({
-      experiments: {
-        [id]: false,
-      },
-    });
-
-    // `react-cookie` uses the React (stable) Context API.
-    render({ context: cookies, props: { _config }, experimentProps: { id } });
-
-    sinon.assert.notCalled(cookies.get);
   });
 
   it('sets isExperimentEnabled prop to false when experiment is disabled by config', () => {
@@ -279,11 +343,12 @@ describe(__filename, () => {
   });
 
   it('sets isUserInExperiment prop to false when the user is not in the experiment', () => {
-    const cookies = fakeCookies({
-      get: sinon.stub().returns(NOT_IN_EXPERIMENT),
-    });
+    const id = makeId('some-id');
+    const _getRegisteredExperiments = sinon
+      .stub()
+      .returns({ [id]: NOT_IN_EXPERIMENT });
 
-    const root = render({ context: cookies });
+    const root = render({ id, props: { _getRegisteredExperiments } });
     expect(root).toHaveProp('isUserInExperiment', false);
   });
 

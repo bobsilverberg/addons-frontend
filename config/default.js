@@ -423,5 +423,7 @@ module.exports = {
     // See: https://github.com/mozilla/addons-frontend/pull/9125#issuecomment-580683288
     //
     // e.g., 20200204_installWarning: true,
+    '20210219_Hero-test': false,
+    '20210219_Hero-test-xxx': false,
   },
 };
