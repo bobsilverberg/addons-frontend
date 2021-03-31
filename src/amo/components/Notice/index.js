@@ -17,6 +17,7 @@ export const errorType: 'error' = 'error';
 export const genericType: 'generic' = 'generic';
 export const genericWarningType: 'genericWarning' = 'genericWarning';
 export const firefoxRequiredType: 'firefox' = 'firefox';
+export const noneType: 'none' = 'none';
 export const successType: 'success' = 'success';
 export const warningInfoType: 'warningInfo' = 'warningInfo';
 export const warningType: 'warning' = 'warning';
@@ -26,6 +27,7 @@ const validTypes = [
   genericType,
   genericWarningType,
   firefoxRequiredType,
+  noneType,
   successType,
   warningInfoType,
   warningType,
@@ -40,6 +42,7 @@ export type NoticeType =
   | typeof firefoxRequiredType
   | typeof genericType
   | typeof genericWarningType
+  | typeof noneType
   | typeof successType
   | typeof warningInfoType
   | typeof warningType;

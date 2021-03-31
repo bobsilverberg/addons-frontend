@@ -5,6 +5,7 @@ import { compose } from 'redux';
 import config from 'config';
 import makeClassName from 'classnames';
 
+import GetFirefoxBanner from 'amo/components/GetFirefoxBanner';
 import GetFirefoxButton, {
   GET_FIREFOX_BUTTON_TYPE_HEADER,
 } from 'amo/components/GetFirefoxButton';
@@ -216,6 +217,7 @@ export class HeaderBase extends React.Component {
           'Header--loaded-page-is-anonymous': loadedPageIsAnonymous,
         })}
       >
+        <GetFirefoxBanner />
         <div className="Header-wrapper">
           <div className="Header-content">
             {isHomePage ? (

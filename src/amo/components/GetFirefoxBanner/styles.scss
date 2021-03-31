@@ -1,0 +1,23 @@
+.GetFirefoxBanner {
+  background: #ffe800;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 1px 7px 0 rgba(0, 0, 0, 0.49);
+  font-size: 14px;
+  left: 50%;
+  line-height: 22px;
+  padding: 12px 40px;
+  position: fixed;
+  text-align: center;
+  transform: translate(-50%, 0);
+  width: 900px;
+  z-index: 999;
+}
+
+.GetFirefoxBanner-button {
+  margin: 0;
+
+  &,
+  &:link {
+    color: #0060df;
+  }
+}
