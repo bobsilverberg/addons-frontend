@@ -35,6 +35,7 @@ export const GET_FIREFOX_BUTTON_CLICK_CATEGORY = 'AMO Download Firefox';
 export type Props = {|
   addon: AddonType,
   className?: string,
+  forIncompatibleAddon?: boolean,
   overrideQueryParams?: {| [name: string]: string | null |},
 |};
 
@@ -90,13 +91,14 @@ export const GetFirefoxButtonBase = ({
   _getPromotedCategory = getPromotedCategory,
   _tracking = tracking,
   addon,
+  forIncompatibleAddon,
   className,
   clientApp,
   i18n,
   overrideQueryParams = {},
   userAgentInfo,
 }: InternalProps): null | React.Node => {
-  if (isFirefox({ userAgentInfo })) {
+  if (isFirefox({ userAgentInfo }) && !forIncompatibleAddon) {
     return null;
   }
 
@@ -118,10 +120,16 @@ export const GetFirefoxButtonBase = ({
     [LINE, RECOMMENDED, SPONSORED, VERIFIED].includes(promotedCategory) &&
     clientApp === CLIENT_APP_FIREFOX;
 
-  const downloadTextForRTAMO =
+  let downloadTextForRTAMO =
     addon.type === ADDON_TYPE_STATIC_THEME
       ? i18n.gettext('Download Firefox and get the theme')
       : i18n.gettext('Download Firefox and get the extension');
+  if (forIncompatibleAddon) {
+    downloadTextForRTAMO =
+      addon.type === ADDON_TYPE_STATIC_THEME
+        ? i18n.gettext('Update Firefox and get the theme')
+        : i18n.gettext('Update Firefox and get the extension');
+  }
   const buttonText = supportsRTAMO
     ? downloadTextForRTAMO
     : i18n.gettext('Download Firefox');
@@ -133,7 +141,9 @@ export const GetFirefoxButtonBase = ({
   const buttonContent = (
     <Button
       buttonType="action"
-      className="GetFirefoxButton-button"
+      className={makeClassName('GetFirefoxButton-button', className, {
+        'GetFirefoxButton-button--for-incompatible': forIncompatibleAddon,
+      })}
       href={`${DOWNLOAD_FIREFOX_BASE_URL}${makeQueryStringWithUTM({
         utm_campaign: DOWNLOAD_FIREFOX_UTM_CAMPAIGN,
         utm_content: addon.guid ? `rta:${_encode(addon.guid)}` : '',
@@ -149,10 +159,12 @@ export const GetFirefoxButtonBase = ({
 
   return (
     <div className={makeClassName('GetFirefoxButton', className)}>
-      <div className="GetFirefoxButton-callout">
-        <div className="GetFirefoxButton-callout-icon" />
-        <div className="GetFirefoxButton-callout-text">{calloutText}</div>
-      </div>
+      {!forIncompatibleAddon ? (
+        <div className="GetFirefoxButton-callout">
+          <div className="GetFirefoxButton-callout-icon" />
+          <div className="GetFirefoxButton-callout-text">{calloutText}</div>
+        </div>
+      ) : null}
       {buttonContent}
     </div>
   );

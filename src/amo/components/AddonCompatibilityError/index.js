@@ -121,41 +121,42 @@ export class AddonCompatibilityErrorBase extends React.Component<InternalProps> 
           add-on because it requires a restart.`);
     } else if (reason === INCOMPATIBLE_UNSUPPORTED_PLATFORM) {
       message = i18n.gettext('This add-on is not available on your platform.');
-    } else if (reason === INCOMPATIBLE_UNDER_MIN_VERSION) {
-      invariant(minVersion, 'minVersion is required');
-      message = i18n.sprintf(
-        i18n.gettext(`This add-on requires a
-        <a href="%(downloadUrl)s">newer version of Firefox</a> (at least
-        version %(minVersion)s). You are using Firefox %(yourVersion)s.`),
-        {
-          downloadUrl,
-          minVersion,
-          yourVersion: userAgentInfo.browser.version,
-        },
-      );
-    } else {
-      // This is an unknown reason code and a custom error message should be
-      // added.
-      _log.warn(
-        `Unknown reason code supplied to AddonCompatibilityError: ${reason}`,
-      );
-
-      message = i18n.sprintf(
-        i18n.gettext(`Your browser does not
-        support add-ons. You can <a href="%(downloadUrl)s">download Firefox</a>
-        to install this add-on.`),
-        { downloadUrl },
-      );
     }
+    // else if (reason === INCOMPATIBLE_UNDER_MIN_VERSION) {
+    //   invariant(minVersion, 'minVersion is required');
+    //   message = i18n.sprintf(
+    //     i18n.gettext(`This add-on requires a
+    //     <a href="%(downloadUrl)s">newer version of Firefox</a> (at least
+    //     version %(minVersion)s). You are using Firefox %(yourVersion)s.`),
+    //     {
+    //       downloadUrl,
+    //       minVersion,
+    //       yourVersion: userAgentInfo.browser.version,
+    //     },
+    //   );
+    // } else {
+    //   // This is an unknown reason code and a custom error message should be
+    //   // added.
+    //   _log.warn(
+    //     `Unknown reason code supplied to AddonCompatibilityError: ${reason}`,
+    //   );
 
-    return (
+    //   message = i18n.sprintf(
+    //     i18n.gettext(`Your browser does not
+    //     support add-ons. You can <a href="%(downloadUrl)s">download Firefox</a>
+    //     to install this add-on.`),
+    //     { downloadUrl },
+    //   );
+    // }
+
+    return message ? (
       <Notice type="error" className="AddonCompatibilityError">
         <span
           className="AddonCompatibilityError-message"
           dangerouslySetInnerHTML={sanitizeHTML(message, ['a'])}
         />
       </Notice>
-    );
+    ) : null;
   }
 }
 

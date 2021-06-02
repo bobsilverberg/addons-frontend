@@ -16,6 +16,10 @@ $callout-color: $yellow-50;
   }
 }
 
+.GetFirefoxButton-button--for-incompatible {
+  margin-top: 16px;
+}
+
 .GetFirefoxButton-callout {
   background-color: $callout-color;
   border: 1px solid $callout-color;
