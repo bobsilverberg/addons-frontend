@@ -1485,3 +1485,8 @@ export const fakeTrackingEvent = Object.freeze({
   label: 'some-label',
   value: 19,
 });
+
+export const fakeExperimentVariant = Object.freeze({
+  id: '20210608_experiment_name',
+  variant: 'some-variant',
+});
