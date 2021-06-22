@@ -12,6 +12,7 @@ import {
   CLIENT_APP_FIREFOX,
   EXCLUDE_WARNING_CATEGORIES,
 } from 'amo/constants';
+import { VARIANT_NEW } from 'amo/experiments/20210622_install_warning_experiment';
 import translate from 'amo/i18n/translate';
 import { getPromotedCategory } from 'amo/utils/addons';
 import {
@@ -23,11 +24,13 @@ import type { UserAgentInfoType } from 'amo/reducers/api';
 import type { AddonType } from 'amo/types/addons';
 import type { I18nType } from 'amo/types/i18n';
 import type { ReactRouterLocationType } from 'amo/types/router';
+import type { Variant } from 'amo/withExperiment';
 
 import './styles.scss';
 
 type Props = {|
   addon: AddonType,
+  variant: Variant,
 |};
 
 type PropsFromState = {|
@@ -72,6 +75,7 @@ export class InstallWarningBase extends React.Component<InternalProps> {
       lang,
       location,
       userAgentInfo,
+      variant,
     } = this.props;
 
     // Do not show this warning if we are also going to show a WrongPlatformWarning.
@@ -87,10 +91,15 @@ export class InstallWarningBase extends React.Component<InternalProps> {
       clientApp,
     });
 
+    // For the experiment, if the new variant, then always show, regardless of
+    // the value of `isFirefox`.
+    const showBasedOnFirefox =
+      variant === VARIANT_NEW ? true : isFirefox({ userAgentInfo });
+
     return _couldShowWarning
       ? _couldShowWarning()
       : !correctedLocation &&
-          isFirefox({ userAgentInfo }) &&
+          showBasedOnFirefox &&
           clientApp === CLIENT_APP_FIREFOX &&
           addon.type === ADDON_TYPE_EXTENSION &&
           (!promotedCategory ||

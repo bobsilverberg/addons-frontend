@@ -8,15 +8,18 @@ import AddonInstallError from 'amo/components/AddonInstallError';
 import InstallButtonWrapper from 'amo/components/InstallButtonWrapper';
 import InstallWarning from 'amo/components/InstallWarning';
 import Link from 'amo/components/Link';
+import LoadingText from 'amo/components/LoadingText';
+import { EXPERIMENT_CONFIG } from 'amo/experiments/20210622_install_warning_experiment';
 import translate from 'amo/i18n/translate';
+import { replaceStringsWithJSX } from 'amo/i18n/utils';
 import { getVersionInfo } from 'amo/reducers/versions';
 import { sanitizeUserHTML } from 'amo/utils';
-import { replaceStringsWithJSX } from 'amo/i18n/utils';
-import LoadingText from 'amo/components/LoadingText';
+import { withExperiment } from 'amo/withExperiment';
 import type { AppState } from 'amo/store';
 import type { AddonVersionType, VersionInfoType } from 'amo/reducers/versions';
 import type { AddonType } from 'amo/types/addons';
 import type { I18nType } from 'amo/types/i18n';
+import type { WithExperimentInjectedProps } from 'amo/withExperiment';
 
 import './styles.scss';
 
@@ -37,6 +40,7 @@ type PropsFromState = {|
 type InternalProps = {|
   ...Props,
   ...PropsFromState,
+  ...WithExperimentInjectedProps,
   i18n: I18nType,
 |};
 
@@ -49,6 +53,7 @@ export const AddonVersionCardBase = (props: InternalProps): React.Node => {
     version,
     versionInfo,
     isCurrentVersion,
+    variant,
   } = props;
 
   if (version === null) {
@@ -204,7 +209,7 @@ export const AddonVersionCardBase = (props: InternalProps): React.Node => {
         showLinkInsteadOfButton={!isCurrentVersion}
       />
 
-      {addon && <InstallWarning addon={addon} />}
+      {addon && <InstallWarning addon={addon} variant={variant} />}
     </li>
   );
 };
@@ -237,6 +242,7 @@ function mapStateToProps(
 const AddonVersionCard: React.ComponentType<Props> = compose(
   translate(),
   connect(mapStateToProps),
+  withExperiment({ experimentConfig: EXPERIMENT_CONFIG }),
 )(AddonVersionCardBase);
 
 export default AddonVersionCard;

@@ -47,5 +47,6 @@ module.exports = {
 
   experiments: {
     '20210531_download_funnel_experiment': true,
+    '20210622_install_warning_experiment': true,
   },
 };

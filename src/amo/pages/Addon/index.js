@@ -25,6 +25,7 @@ import DefaultRatingManager from 'amo/components/RatingManager';
 import ScreenShots from 'amo/components/ScreenShots';
 import Link from 'amo/components/Link';
 import WrongPlatformWarning from 'amo/components/WrongPlatformWarning';
+import { EXPERIMENT_CONFIG } from 'amo/experiments/20210622_install_warning_experiment';
 import { getAddonsForSlug } from 'amo/reducers/addonsByAuthors';
 import { reviewListURL } from 'amo/reducers/reviews';
 import { getAddonURL, nl2br, sanitizeHTML, sanitizeUserHTML } from 'amo/utils';
@@ -49,6 +50,7 @@ import LoadingText from 'amo/components/LoadingText';
 import ShowMoreCard from 'amo/components/ShowMoreCard';
 import ThemeImage from 'amo/components/ThemeImage';
 import Notice from 'amo/components/Notice';
+import { withExperiment } from 'amo/withExperiment';
 
 import './styles.scss';
 
@@ -72,6 +74,7 @@ export class AddonBase extends React.Component {
       params: PropTypes.object.isRequired,
     }).isRequired,
     addonsByAuthors: PropTypes.array,
+    variant: PropTypes.string,
   };
 
   static defaultProps = {
@@ -398,8 +401,14 @@ export class AddonBase extends React.Component {
   }
 
   render() {
-    const { addon, addonsByAuthors, currentVersion, errorHandler, i18n } =
-      this.props;
+    const {
+      addon,
+      addonsByAuthors,
+      currentVersion,
+      errorHandler,
+      i18n,
+      variant,
+    } = this.props;
 
     const isThemeType = addon && addon.type === ADDON_TYPE_STATIC_THEME;
     let errorBanner = null;
@@ -493,7 +502,7 @@ export class AddonBase extends React.Component {
                   className="Addon-WrongPlatformWarning"
                 />
               ) : null}
-              {addon && <InstallWarning addon={addon} />}
+              {addon && <InstallWarning addon={addon} variant={variant} />}
             </Card>
 
             <Card className="Addon-header-meta-and-ratings" photonStyle>
@@ -583,4 +592,5 @@ export default compose(
   translate(),
   connect(mapStateToProps),
   withFixedErrorHandler({ fileName: __filename, extractId }),
+  withExperiment({ experimentConfig: EXPERIMENT_CONFIG }),
 )(AddonBase);

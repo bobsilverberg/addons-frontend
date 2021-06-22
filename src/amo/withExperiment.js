@@ -78,6 +78,7 @@ type CookieConfig = {|
   secure?: boolean,
 |};
 
+export type Variant = string | null;
 type ExperimentVariant = {| id: string, percentage: number |};
 type RegisteredExpermients = {| [experimentId: string]: string |};
 
@@ -92,7 +93,7 @@ export type WithExperimentInjectedProps = {|
   experimentId: string,
   isExperimentEnabled: boolean,
   isUserInExperiment: boolean,
-  variant: string | null,
+  variant: Variant,
 |};
 
 type WithExperimentProps = {|
@@ -107,7 +108,7 @@ export const getVariant = ({
 }: {|
   randomizer?: () => number,
   variants: ExperimentVariant[],
-|}): string => {
+|}): Variant => {
   invariant(
     variants.reduce((total, variant) => total + variant.percentage, 0) === 1,
     'The sum of all percentages in `variants` must be 1',
@@ -192,6 +193,7 @@ export const withExperiment =
 
       constructor(props: WithExperimentInternalProps) {
         super(props);
+        console.log('---- in constructor, id: ', id);
 
         this.variant = this.experimentSetup(props).variant;
       }
@@ -214,6 +216,7 @@ export const withExperiment =
         const addExperimentToCookie = !experimentInCookie;
         const variantFromStore = storedVariants[id];
 
+        console.log('---- variantFromStore: ', variantFromStore);
         if (isEnabled && !variant) {
           // Use the variant in the cookie if one exists, otherwise use the
           // variant from the Redux store.
@@ -234,6 +237,7 @@ export const withExperiment =
 
             // Store the variant in the Redux store for use during
             // componentDidMount.
+            console.log('---- dispatching storeExperimentVariant: ', variant);
             dispatch(storeExperimentVariant({ id, variant }));
           }
         }
@@ -249,6 +253,7 @@ export const withExperiment =
 
       componentDidMount() {
         const { _isExperimentEnabled, cookies } = this.props;
+        console.log('---- in componentDidMount...');
 
         const { addExperimentToCookie, registeredExperiments, variant } =
           this.experimentSetup(this.props);

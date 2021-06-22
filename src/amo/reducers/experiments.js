@@ -1,14 +1,16 @@
 /* @flow */
+import type { Variant } from 'amo/withExperiment';
+
 export const STORE_EXPERIMENT_VARIANT: 'STORE_EXPERIMENT_VARIANT' =
   'STORE_EXPERIMENT_VARIANT';
 
-export type ExperimentsState = {| [experimentId: string]: string |};
+export type ExperimentsState = {| [experimentId: string]: Variant |};
 
 export const initialState: ExperimentsState = {};
 
 type StoreExperimentVariantParams = {|
   id: string,
-  variant: string,
+  variant: Variant,
 |};
 
 export type StoreExperimentVariantAction = {|
