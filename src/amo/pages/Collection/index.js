@@ -142,6 +142,7 @@ export class CollectionBase extends React.Component<InternalProps> {
   };
 
   constructor(props: InternalProps) {
+    console.log('----- in constructor...');
     super(props);
 
     this.addonPlaceholderCount = DEFAULT_ADDON_PLACEHOLDER_COUNT;
@@ -159,6 +160,7 @@ export class CollectionBase extends React.Component<InternalProps> {
   }
 
   componentDidUpdate(prevProps: InternalProps) {
+    console.log('----- in componentDidUpdate...');
     this.loadDataIfNeeded(prevProps);
     this.maybeResetAddonPlaceholderCount();
   }
@@ -195,6 +197,9 @@ export class CollectionBase extends React.Component<InternalProps> {
       match: { params },
     } = this.props;
 
+    console.log('----- in loadDataIfNeeded, creating: ', creating);
+    console.log('----- in loadDataIfNeeded, loading: ', loading);
+
     if (errorHandler.hasError()) {
       log.warn('Not loading data because of an error.');
       return;
@@ -213,9 +218,20 @@ export class CollectionBase extends React.Component<InternalProps> {
       }
     }
 
+    console.log('----- in loadDataIfNeeded, filters: ', filters);
+    console.log(
+      '----- in loadDataIfNeeded, prevProps.filters: ',
+      prevProps && prevProps.filters,
+    );
+
     if (prevProps && !deepEqual(prevProps.filters, filters)) {
       addonsPageChanged = true;
     }
+
+    console.log(
+      '----- in loadDataIfNeeded, addonsPageChanged: ',
+      addonsPageChanged,
+    );
 
     if (collection) {
       let isSameCollectionUser;
@@ -245,6 +261,9 @@ export class CollectionBase extends React.Component<InternalProps> {
           ? collectionEditUrl({ collection })
           : collectionUrl({ collection });
 
+        console.log(
+          '----- in loadDataIfNeeded, dispatching sendServerRedirect...',
+        );
         this.props.dispatch(
           sendServerRedirect({
             status: 301,
@@ -256,6 +275,9 @@ export class CollectionBase extends React.Component<InternalProps> {
     }
 
     if (!collection || collectionChanged) {
+      console.log(
+        '----- in loadDataIfNeeded, dispatching fetchCurrentCollection...',
+      );
       this.props.dispatch(
         fetchCurrentCollection({
           errorHandlerId: errorHandler.id,
@@ -272,6 +294,9 @@ export class CollectionBase extends React.Component<InternalProps> {
     }
 
     if (collection && addonsPageChanged && collection.numberOfAddons) {
+      console.log(
+        '----- in loadDataIfNeeded, dispatching fetchCurrentCollectionPage...',
+      );
       this.props.dispatch(
         fetchCurrentCollectionPage({
           errorHandlerId: errorHandler.id,
@@ -555,7 +580,7 @@ export class CollectionBase extends React.Component<InternalProps> {
   }
 }
 
-export const mapStateToProps = (
+const mapStateToProps = (
   state: AppState,
   ownProps: InternalProps,
 ): PropsFromState => {
@@ -563,6 +588,7 @@ export const mapStateToProps = (
 
   const { loading } = collections.current;
   const { creating, location } = ownProps;
+  console.log('----- in mapStateToProps, loading: ', loading);
 
   const filters = {
     page: location.query.page || '1',

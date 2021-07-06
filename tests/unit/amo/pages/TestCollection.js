@@ -5,7 +5,6 @@ import Collection, {
   CollectionBase,
   DEFAULT_ADDON_PLACEHOLDER_COUNT,
   extractId,
-  mapStateToProps,
 } from 'amo/pages/Collection';
 import AddonsCard from 'amo/components/AddonsCard';
 import CollectionAddAddon from 'amo/components/CollectionAddAddon';
@@ -89,9 +88,7 @@ describe(__filename, () => {
   const simulateReduxStateChange = ({ wrapper, store }) => {
     // This is needed because shallowUntilTarget() does not trigger any
     // lifecycle methods.
-    wrapper.setProps(
-      mapStateToProps(store.getState(), { location: createFakeLocation() }),
-    );
+    wrapper.setProps({ location: createFakeLocation() });
   };
 
   const createCollectionWithTwoAddons = () => {
@@ -680,7 +677,7 @@ describe(__filename, () => {
       detail,
       addonsResponse,
     });
-    simulateReduxStateChange({ wrapper, store });
+    // simulateReduxStateChange({ wrapper, store });
 
     // Since the placeholder calculation happens in
     // componentDidUpdate(), we need to re-render to see the effect.
@@ -883,7 +880,8 @@ describe(__filename, () => {
       }),
     );
 
-    simulateReduxStateChange({ wrapper, store });
+    wrapper.setProps({ filters: { page: 2 } });
+    // simulateReduxStateChange({ wrapper, store });
 
     expect(wrapper.find(AddonsCard)).toHaveProp('loading', true);
     // We should not update the collection detail card.
