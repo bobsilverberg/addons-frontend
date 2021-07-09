@@ -70,6 +70,7 @@ module.exports = {
         addonsServerDevCDN,
         webpackHost,
         `${analyticsHost}/analytics.js`,
+        `${analyticsHost}/plugins/ua/ec.js`,
       ],
       styleSrc: [
         "'self'",

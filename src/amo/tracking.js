@@ -163,6 +163,8 @@ export class Tracking {
       ga.l = +new Date();
       /* eslint-enable */
       ga('create', this.id, 'auto');
+      // Include the enhanced ecommerce plug-in.
+      ga('require', 'ec');
       ga('set', 'transport', 'beacon');
       if (convertBoolean(_config.get('trackingSendInitPageView'))) {
         ga('send', 'pageview');

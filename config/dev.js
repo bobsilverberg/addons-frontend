@@ -34,6 +34,7 @@ module.exports = {
       scriptSrc: [
         `${addonsFrontendCDN}/static/`,
         `${analyticsHost}/analytics.js`,
+        `${analyticsHost}/plugins/ua/ec.js`,
       ],
       styleSrc: [
         `${addonsFrontendCDN}/static/`,
